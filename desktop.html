@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Junk Removal Fee Schedule — Las Vegas, NV</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f7f7f8;
+    --text-primary: #1a1a1a;
+    --text-secondary: #5f5f5f;
+    --border: #e0e0e0;
+    --accent: #2563eb;
+    --accent-bg: #eef2ff;
+    --warning-bg: #fff7e6;
+    --warning-border: #f0c674;
+    --info-bg: #eef6ff;
+    --info-border: #a9cdf5;
+    --stat-warning: #b45309;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg);
+    margin: 0;
+    padding: 32px 24px 80px;
+    line-height: 1.5;
+  }
+  main { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 26px; font-weight: 650; margin: 0 0 4px; }
+  h2 { font-size: 19px; font-weight: 650; margin: 28px 0 10px; }
+  h3 { font-size: 16px; font-weight: 650; margin: 20px 0 8px; }
+  p.subtitle { color: var(--text-secondary); font-size: 13px; margin: 0 0 20px; }
+  .callout {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 14px 0;
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .callout.warning { background: var(--warning-bg); border-color: var(--warning-border); }
+  .callout.info { background: var(--info-bg); border-color: var(--info-border); }
+  .callout-title { font-weight: 650; margin-bottom: 6px; font-size: 13px; }
+  .callout p { margin: 4px 0; color: var(--text-primary); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 12px 0 20px;
+  }
+  .stat {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .stat .value { font-size: 22px; font-weight: 650; }
+  .stat .value.warning { color: var(--stat-warning); }
+  .stat .label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 650;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-alt);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-body { padding: 16px; }
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .input-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  label.field { display: flex; flex-direction: column; gap: 4px; }
+  label.field span { font-size: 12px; color: var(--text-secondary); }
+  input[type="number"] {
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0 8px;
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg);
+  }
+  input[type="number"]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  button {
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-alt);
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--text-primary);
+  }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button:hover { opacity: 0.85; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 8px 0 4px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+  th { background: var(--bg-alt); font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  td.num, th.num { text-align: right; }
+  .helper-row { display: flex; align-items: center; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .note { color: var(--text-secondary); font-size: 12px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .sources li { font-size: 13px; margin: 4px 0; }
+  code { background: var(--bg-alt); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  @media (max-width: 700px) {
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .input-grid, .input-grid.cols-4 { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Junk Removal Fee Schedule — Las Vegas, NV</h1>
+  <p class="subtitle">Interactive cost model for a 2020 Ram 1500 V6 4x4 (19 city / 24 hwy mpg) towing a 4,000 lb dump trailer · edit any input below to match your real numbers · your edits are saved in this browser automatically</p>
+
+  <div class="callout warning">
+    <div class="callout-title">The two attached rate sheets aren't landfill tipping fees</div>
+    <p><code>RSSN-RATES-2025-2026.pdf</code> and <code>Republic_Services_Rates_Effective_July_1,2025-June_30,2026.pdf</code> are the franchise billing schedules Republic Services / Clark County charges HOAs, businesses, motels, and medical/sewage-waste customers for curbside collection contracts — not the price you pay to self-haul a load to the landfill or transfer station. That self-haul "gate rate" is a separate, publicly posted number (below), and it's the actual cost driver for your business.</p>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">Real disposal costs for a self-haul operator in the Las Vegas area</div>
+    <p><strong>Apex Regional Landfill</strong> (the only landfill in Clark County, owned/operated by Republic Services under its 20-year county franchise): posted self-haul gate rate is <strong>$37.54/ton</strong>, weighed on entry. ~30 miles north of the Strip.</p>
+    <p><strong>Republic's Cheyenne &amp; Henderson Transfer Stations</strong> accept most general items 7 days/week, 7 a.m.–3 p.m. — many household items free, but refrigerant-containing appliances carry a separate fee.</p>
+    <p><strong>Western Elite (private, non-franchise)</strong> runs in-town yards that bill by the cubic yard instead of by weight — worth comparing for smaller loads since they're closer to the Strip.</p>
+    <p class="note">Fees and accepted-item lists change — call Republic Services at 702-735-5151 or the scale house directly before you lock in a routing plan.</p>
+  </div>
+
+  <hr />
+
+  <h2>Your cost basis right now</h2>
+  <div class="stat-grid" id="statGrid"></div>
+
+  <div class="card">
+    <div class="card-header">Solo take-home → labor rate helper</div>
+    <div class="card-body">
+      <p class="note" style="margin-top:0">You're a solo operator with no helper right now, so the labor rate is 100% your own time. Set your target net take-home per hour worked and this backs into the billing rate that actually gets you there, after tax and overhead.</p>
+      <div class="input-grid cols-4">
+        <label class="field"><span>Target net take-home ($/hr)</span><input type="number" id="targetTakeHome" step="0.5" /></label>
+        <label class="field"><span>Combined tax rate — SE + federal (%)</span><input type="number" id="effectiveTaxRatePct" step="1" /></label>
+        <label class="field"><span>Overhead reserve ($/hr)</span><input type="number" id="overheadPerHour" step="0.5" /></label>
+        <label class="field"><span>Billable utilization (%)</span><input type="number" id="billableUtilizationPct" step="1" /></label>
+      </div>
+      <div class="helper-row">
+        <div class="stat"><div class="value" id="suggestedLaborRateOut">$0.00</div><div class="label">Suggested labor rate to bill</div></div>
+        <button class="primary" id="useRateBtn">Use this rate below</button>
+      </div>
+      <p class="note">Nevada has no state income tax, so 28% combined SE + federal tax is a reasonable starting estimate for most solo operators — adjust once you talk to an accountant. Utilization below 100% means the days you're not fully booked still get covered by the hours you do bill.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Cost assumptions — edit to match your operation <button id="resetBtn">Reset to defaults</button></div>
+    <div class="card-body">
+      <div class="input-grid" id="assumptionsGrid"></div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">Why labor is in the cost model</div>
+    <p>Right now the labor rate is 100% your own time (driving, loading, the dump run, unloading) — set it well above your take-home target, not equal to it. It needs to absorb self-employment tax, insurance, equipment wear, and the hours you spend scheduling/invoicing that no single job pays for directly. The helper above walks through that build-up. Keep the breakdown internal — quote customers one flat price per load or item, not an itemized labor/fuel/dump-fee bill.</p>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">Towing capacity — verify before you load up</div>
+    <p>A 2020 Ram 1500 3.6L V6 4x4's max tow rating runs roughly <strong>6,390–7,730 lbs</strong> depending on cab/bed/axle-ratio, and max payload (which must include trailer tongue weight) tops out around <strong>2,300 lbs</strong>. With a 4,000 lb empty trailer, that leaves roughly 2,400–3,700 lbs of cargo at the truck's absolute limit — the default above (2,800 lbs) already builds in a safety margin for Las Vegas heat, grades, and tongue weight. Check your exact door-jamb Tire &amp; Loading placard and the trailer's own VIN data plate, and don't run at the raw maximum on every job.</p>
+  </div>
+
+  <hr />
+
+  <h2>Load-based pricing (fraction of trailer filled)</h2>
+  <p class="note">The industry-standard way to price mixed furniture/junk jobs: by how much of your trailer the job fills, not by counting individual items.</p>
+  <table id="loadTable">
+    <thead><tr><th>Load size</th><th class="num">Volume</th><th class="num">Est. weight</th><th class="num">Your cost</th><th class="num">Suggested price</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <hr />
+
+  <h2>Quick reference: price by item</h2>
+  <p class="note">For jobs with just one or two items, skip the load-fraction math and quote straight from these tables. All prices already include the minimum job price floor.</p>
+
+  <h3>Furniture &amp; household items</h3>
+  <table id="furnitureTable"><thead><tr><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
+
+  <h3>Appliances &amp; electronics (no refrigerant)</h3>
+  <table id="appliancesTable"><thead><tr><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
+
+  <h3>Hazardous / special-handling items</h3>
+  <table id="hazmatTable"><thead><tr><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
+
+  <div class="callout info">
+    <div class="callout-title">Freon and oil rules that affect pricing</div>
+    <p>Nevada requires refrigerator/freezer doors and latching mechanisms removed before disposal, and the refrigerant must be recovered by a certified tech before the unit can go through normal channels — that's what the Freon handling fee covers. Used motor oil and other liquids must never be poured loose into your trailer; haul them in sealed, upright containers and drop them at an approved recycler (many auto parts stores take oil free) or Republic's household hazardous waste sites in North Las Vegas / Henderson (Wed–Sat, rotating schedule).</p>
+  </div>
+
+  <h3>Specialty items — start here, then confirm in person</h3>
+  <table id="specialtyTable"><thead><tr><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Starting price</th><th>Notes</th></tr></thead><tbody></tbody></table>
+
+  <hr />
+
+  <h2>Additional fees &amp; surcharges</h2>
+  <table>
+    <thead><tr><th>Fee</th><th>Suggested amount</th><th>When it applies</th></tr></thead>
+    <tbody>
+      <tr><td>Minimum job / trip charge</td><td id="minPriceCell"></td><td>Applied whenever the calculated price falls below this floor</td></tr>
+      <tr><td>Travel surcharge beyond 15 mi from base</td><td>$1.50–$2.00/mi one-way beyond 15 mi</td><td>Extra windshield time &amp; fuel to reach far-out jobs (Laughlin, Boulder City, Mt. Charleston)</td></tr>
+      <tr><td>Stairs (no elevator)</td><td>$15–$25 per flight, per item group</td><td>Extra labor/time carrying items up/down stairs</td></tr>
+      <tr><td>Long carry (&gt;75 ft door-to-truck)</td><td>$25–$50 flat</td><td>Long walkways, alleys, or gated communities with distant parking</td></tr>
+      <tr><td>Same-day / rush service</td><td>+25%–40% of quoted price</td><td>Reshuffling the schedule to fit you in same-day</td></tr>
+      <tr><td>After-hours, weekend, or holiday</td><td>+$25–$50 flat or +20%</td><td>Matches your own after-hours availability premium</td></tr>
+      <tr><td>Disassembly required</td><td>$20–$40 per item</td><td>Bed frames, sectionals, or furniture that must be broken down to move</td></tr>
+      <tr><td>No access / no-show on arrival</td><td>$50–$75</td><td>Covers wasted drive time and a lost route slot</td></tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>Sources</h2>
+  <ul class="sources">
+    <li><a href="https://www.wastetodaymagazine.com/news/clark-county-nevada-landfill-republic-franchise/" target="_blank">Waste Today — Clark County/Apex Landfill franchise agreement &amp; $37.54/ton gate rate</a></li>
+    <li><a href="https://www.republicservices.com/municipality/southern-nevada" target="_blank">Republic Services — Southern Nevada transfer station hours &amp; accepted items</a></li>
+    <li><a href="https://ndep.nv.gov/nevada-recycles/recycle/where-can-i-recycle" target="_blank">Nevada Division of Environmental Protection — household hazardous waste disposal guidance</a></li>
+  </ul>
+  <p class="note">Vehicle specs: 2020 Ram 1500 3.6L Pentastar V6 4x4 towing (6,390–7,730 lbs) and payload (up to 2,300 lbs) ratings per Stellantis/Mopar published specifications — actual figures vary by your specific cab, bed, and axle ratio.</p>
+</main>
+
+<script>
+  const DEFAULTS = {
+    gasPrice: 5.00, towMpg: 12, localMpg: 16, dumpRoundTripMiles: 20, localDriveMiles: 10,
+    avgSpeedMph: 25, trailerCuYd: 7, trailerPayloadLbs: 2800, dumpFeePerTon: 37.54,
+    laborRate: 88, vehicleCostPerMile: 0.30, markup: 1.5, freonFee: 40, oilFee: 30,
+    minimumPrice: 89, targetTakeHome: 47.50, effectiveTaxRatePct: 28, overheadPerHour: 6,
+    billableUtilizationPct: 80,
+  };
+
+  const FIELD_DEFS = [
+    ["gasPrice", "Gas price ($/gal)"],
+    ["towMpg", "Towing MPG (loaded, city)"],
+    ["localMpg", "Local-drive MPG (no/light trailer)"],
+    ["dumpRoundTripMiles", "Miles: job site ↔ dump (round trip)"],
+    ["localDriveMiles", "Miles: base ↔ job site (round trip)"],
+    ["avgSpeedMph", "Avg. driving speed towing (mph)"],
+    ["trailerCuYd", "Trailer capacity (cubic yards)"],
+    ["trailerPayloadLbs", "Safe trailer payload (lbs)"],
+    ["dumpFeePerTon", "Landfill dump fee ($/ton)"],
+    ["laborRate", "Labor rate — solo operator ($/hr)"],
+    ["vehicleCostPerMile", "Vehicle wear & tear ($/mile, non-fuel)"],
+    ["markup", "Profit & overhead multiplier (×cost)"],
+    ["freonFee", "Freon-appliance handling fee ($/unit)"],
+    ["oilFee", "Motor oil / hazmat handling fee ($/trip)"],
+    ["minimumPrice", "Minimum job price ($)"],
+  ];
+
+  const FURNITURE = [
+    ["A few boxes/bags of misc. items", 0.15, 40],
+    ["Single chair / small side table", 0.3, 25],
+    ["Recliner / armchair", 0.5, 90],
+    ["Loveseat", 1.0, 100],
+    ["Sofa / couch (3-seat)", 1.5, 130],
+    ["Sectional sofa", 3.0, 250],
+    ["Mattress or box spring (single piece)", 0.4, 60],
+    ["Mattress + box spring set", 0.8, 120],
+    ["Dresser / chest of drawers", 1.0, 120],
+    ["Dining table + 4 chairs", 1.75, 150],
+    ["Desk", 0.75, 90],
+    ["Bookshelf / cabinet", 0.75, 100],
+  ];
+  const APPLIANCES = [
+    ["Washer", 0.5, 180],
+    ["Dryer", 0.5, 100],
+    ["Stove / range", 0.5, 175],
+    ["Dishwasher", 0.4, 100],
+    ["Microwave / small electronics", 0.1, 30],
+    ["Flat-screen TV", 0.15, 25],
+    ["Treadmill / large gym equipment", 1.5, 250],
+  ];
+  const HAZMAT = [
+    ["Refrigerator or freezer (contains Freon)", 0.75, 250, "freon"],
+    ["Window, wall, or portable AC unit (contains Freon)", 0.25, 60, "freon"],
+    ["Used motor oil — up to 5 gal, sealed & upright", 0.05, 40, "oil"],
+    ["Other HHW — paint, batteries, propane, pesticides", 0.1, 30, "oil"],
+  ];
+  const SPECIALTY = [
+    ["Upright piano", 3.0, 450, null, "Weight-dense & fragile — plan for 3 people or a piano dolly."],
+    ["Hot tub / spa shell", 5.0, 600, null, "Often needs draining/disassembly first — quote in person."],
+    ["Large/heavy safe", 0.5, 400, null, "Weight far exceeds typical density for its size — verify weight on-site."],
+  ];
+  const LOAD_TIERS = [
+    ["1/8 load", 0.125], ["1/4 load", 0.25], ["3/8 load", 0.375], ["1/2 load", 0.5],
+    ["5/8 load", 0.625], ["3/4 load", 0.75], ["7/8 load", 0.875], ["Full load", 1.0],
+  ];
+
+  const STORAGE_KEY = "junkRemovalFeeSchedule.v1";
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? { ...DEFAULTS, ...JSON.parse(raw) } : { ...DEFAULTS };
+    } catch (e) {
+      return { ...DEFAULTS };
+    }
+  }
+  function saveState(state) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  let state = loadState();
+
+  function num(v, fallback) {
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  function roundNice(v) {
+    if (v < 150) return Math.round(v / 5) * 5;
+    if (v < 500) return Math.round(v / 10) * 10;
+    return Math.round(v / 25) * 25;
+  }
+  function fmt0(n) { return "$" + Math.round(n).toLocaleString(); }
+  function fmt2(n) { return "$" + n.toFixed(2); }
+
+  function computeAll() {
+    const gas = num(state.gasPrice, 5);
+    const tMpg = num(state.towMpg, 12);
+    const lMpg = num(state.localMpg, 16);
+    const dumpMiles = num(state.dumpRoundTripMiles, 20);
+    const localMiles = num(state.localDriveMiles, 10);
+    const speed = num(state.avgSpeedMph, 25);
+    const cuYd = Math.max(num(state.trailerCuYd, 7), 0.01);
+    const payload = num(state.trailerPayloadLbs, 2800);
+    const dumpRate = num(state.dumpFeePerTon, 37.54);
+    const labor = num(state.laborRate, 88);
+    const vpm = num(state.vehicleCostPerMile, 0.3);
+    const mk = num(state.markup, 1.5);
+    const freon = num(state.freonFee, 40);
+    const oil = num(state.oilFee, 30);
+    const minPrice = num(state.minimumPrice, 89);
+    const takeHome = num(state.targetTakeHome, 47.5);
+    const taxPct = num(state.effectiveTaxRatePct, 28);
+    const overheadHr = num(state.overheadPerHour, 6);
+    const utilizationPct = Math.min(Math.max(num(state.billableUtilizationPct, 80), 1), 100);
+
+    const preTaxRate = takeHome / (1 - taxPct / 100);
+    const suggestedLaborRate = (preTaxRate + overheadHr) / (utilizationPct / 100);
+
+    const fixedDumpTripCost = (dumpMiles / tMpg) * gas + dumpMiles * vpm + (dumpMiles / speed) * labor;
+    const baseStopCost = (localMiles / lMpg) * gas + localMiles * vpm + 0.5 * labor;
+
+    function costForFraction(f) {
+      const loadingLaborCost = f * 1.0 * labor;
+      const weightTons = (f * payload) / 2000;
+      const dumpFeeCost = weightTons * dumpRate;
+      const dumpShare = f * fixedDumpTripCost;
+      return baseStopCost + loadingLaborCost + dumpFeeCost + dumpShare;
+    }
+    function priceForFraction(f, extra) {
+      extra = extra || 0;
+      return Math.max(minPrice, roundNice((costForFraction(f) + extra) * mk));
+    }
+    function itemPrice(cuYdItem, extraFeeKey) {
+      const f = cuYdItem / cuYd;
+      const extra = extraFeeKey === "freon" ? freon : extraFeeKey === "oil" ? oil : 0;
+      return priceForFraction(f, extra);
+    }
+
+    return { cuYd, payload, freon, oil, minPrice, suggestedLaborRate, costForFraction, priceForFraction, itemPrice };
+  }
+
+  function renderAssumptionsGrid() {
+    const grid = document.getElementById("assumptionsGrid");
+    grid.innerHTML = "";
+    FIELD_DEFS.forEach(([key, label]) => {
+      const wrap = document.createElement("label");
+      wrap.className = "field";
+      wrap.innerHTML = `<span>${label}</span>`;
+      const input = document.createElement("input");
+      input.type = "number";
+      input.step = "any";
+      input.id = "field-" + key;
+      input.value = state[key];
+      input.addEventListener("input", () => {
+        state[key] = input.value === "" ? "" : parseFloat(input.value);
+        saveState(state);
+        renderAll();
+      });
+      wrap.appendChild(input);
+      grid.appendChild(wrap);
+    });
+  }
+
+  function bindHelperInputs() {
+    ["targetTakeHome", "effectiveTaxRatePct", "overheadPerHour", "billableUtilizationPct"].forEach((key) => {
+      const el = document.getElementById(key);
+      el.value = state[key];
+      el.addEventListener("input", () => {
+        state[key] = el.value === "" ? "" : parseFloat(el.value);
+        saveState(state);
+        renderAll();
+      });
+    });
+    document.getElementById("useRateBtn").addEventListener("click", () => {
+      const { suggestedLaborRate } = computeAll();
+      state.laborRate = parseFloat(suggestedLaborRate.toFixed(2));
+      saveState(state);
+      const laborInput = document.getElementById("field-laborRate");
+      if (laborInput) laborInput.value = state.laborRate;
+      renderAll();
+    });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      state = { ...DEFAULTS };
+      saveState(state);
+      renderAssumptionsGrid();
+      bindHelperInputs();
+      renderAll();
+    });
+  }
+
+  function rowsForItems(items, calc) {
+    return items.map(([name, cuYdItem, lbs, extraFeeKey, extraNote]) => {
+      const price = calc.itemPrice(cuYdItem, extraFeeKey);
+      const notes = [];
+      if (extraFeeKey === "freon") notes.push(`Includes ${fmt0(calc.freon)} Freon handling fee`);
+      if (extraFeeKey === "oil") notes.push(`Includes ${fmt0(calc.oil)} hazmat handling fee`);
+      if (lbs >= 150) notes.push("Plan for 2 people");
+      if (cuYdItem > calc.cuYd) notes.push("Exceeds trailer capacity alone — may need a second trip");
+      if (extraNote) notes.push(extraNote);
+      return `<tr><td>${name}</td><td class="num">${cuYdItem.toFixed(2)} cu yd</td><td class="num">~${lbs} lbs</td><td class="num">${fmt0(price)}</td><td>${notes.join(" · ") || "—"}</td></tr>`;
+    }).join("");
+  }
+
+  function renderAll() {
+    const calc = computeAll();
+
+    document.getElementById("suggestedLaborRateOut").textContent = fmt2(calc.suggestedLaborRate);
+
+    document.getElementById("statGrid").innerHTML = `
+      <div class="stat"><div class="value">${fmt0(calc.priceForFraction(0.125))}</div><div class="label">Single item (1/8 load)</div></div>
+      <div class="stat"><div class="value">${fmt0(calc.priceForFraction(0.5))}</div><div class="label">Half trailer load</div></div>
+      <div class="stat"><div class="value">${fmt0(calc.priceForFraction(1))}</div><div class="label">Full trailer load</div></div>
+      <div class="stat"><div class="value warning">${fmt0(calc.costForFraction(1))}</div><div class="label">Your cost to fill &amp; dump a full load</div></div>
+    `;
+
+    document.querySelector("#loadTable tbody").innerHTML = LOAD_TIERS.map(([label, f]) => `
+      <tr>
+        <td>${label}</td>
+        <td class="num">${(f * calc.cuYd).toFixed(2)} cu yd</td>
+        <td class="num">${Math.round(f * calc.payload).toLocaleString()} lbs</td>
+        <td class="num">${fmt2(calc.costForFraction(f))}</td>
+        <td class="num">${fmt0(calc.priceForFraction(f))}</td>
+      </tr>
+    `).join("");
+
+    document.querySelector("#furnitureTable tbody").innerHTML = rowsForItems(FURNITURE, calc);
+    document.querySelector("#appliancesTable tbody").innerHTML = rowsForItems(APPLIANCES, calc);
+    document.querySelector("#hazmatTable tbody").innerHTML = rowsForItems(HAZMAT, calc);
+    document.querySelector("#specialtyTable tbody").innerHTML = rowsForItems(SPECIALTY, calc);
+
+    document.getElementById("minPriceCell").textContent = fmt0(calc.minPrice);
+  }
+
+  renderAssumptionsGrid();
+  bindHelperInputs();
+  renderAll();
+</script>
+</body>
+</html>
