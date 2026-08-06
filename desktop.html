@@ -6,6 +6,18 @@
 <script>
   (function () {
     try {
+      var params = new URLSearchParams(location.search);
+      var forced = params.get("view");
+      var ua = navigator.userAgent || "";
+      var isMobileDevice = /iPhone|iPod|Android.*Mobile|Windows Phone|BlackBerry|Opera Mini|IEMobile/i.test(ua);
+      var wantMobile = forced === "mobile" ? true : forced === "desktop" ? false : isMobileDevice;
+      if (wantMobile) location.replace("./" + (location.search || ""));
+    } catch (e) {}
+  })();
+</script>
+<script>
+  (function () {
+    try {
       var t = localStorage.getItem("junkRemovalTheme.v1") || "dark";
       document.documentElement.setAttribute("data-theme", t);
     } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
@@ -334,6 +346,7 @@
     <li><a href="https://ndep.nv.gov/nevada-recycles/recycle/where-can-i-recycle" target="_blank">Nevada Division of Environmental Protection — household hazardous waste disposal guidance</a></li>
   </ul>
   <p class="note">Vehicle specs: 2020 Ram 1500 3.6L Pentastar V6 4x4 towing (6,390–7,730 lbs) and payload (up to 2,300 lbs) ratings per Stellantis/Mopar published specifications — actual figures vary by your specific cab, bed, and axle ratio.</p>
+  <p class="note" style="text-align:center;"><a href="./?view=mobile">Switch to mobile view →</a></p>
 </main>
 
 <div class="quote-bar" id="quoteBar">

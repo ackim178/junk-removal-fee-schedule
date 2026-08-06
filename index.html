@@ -10,6 +10,18 @@
 <script>
   (function () {
     try {
+      var params = new URLSearchParams(location.search);
+      var forced = params.get("view");
+      var ua = navigator.userAgent || "";
+      var isMobileDevice = /iPhone|iPod|Android.*Mobile|Windows Phone|BlackBerry|Opera Mini|IEMobile/i.test(ua);
+      var wantMobile = forced === "mobile" ? true : forced === "desktop" ? false : isMobileDevice;
+      if (!wantMobile) location.replace("desktop.html" + (location.search || ""));
+    } catch (e) {}
+  })();
+</script>
+<script>
+  (function () {
+    try {
       var t = localStorage.getItem("junkRemovalThemeMobile.v1") || "dark";
       document.documentElement.setAttribute("data-theme", t);
     } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
@@ -561,6 +573,7 @@
     <li><a href="https://ndep.nv.gov/nevada-recycles/recycle/where-can-i-recycle">Nevada DEP — household hazardous waste guidance</a></li>
   </ul>
   <p class="note">Vehicle specs: 2020 Ram 1500 3.6L V6 4x4 towing (6,390–7,730 lbs) and payload (up to 2,300 lbs) per Stellantis/Mopar published specs — verify against your specific configuration.</p>
+  <p class="note" style="text-align:center;"><a href="desktop.html?view=desktop">Switch to desktop view →</a></p>
 </main>
 
 <div class="quote-bar" id="quoteBar">
