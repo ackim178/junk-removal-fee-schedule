@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("junkRemovalTheme.v1") || "dark";
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+  })();
+</script>
 <title>Junk Removal Fee Schedule — Las Vegas, NV</title>
 <style>
   :root {
@@ -18,6 +26,22 @@
     --info-bg: #eef6ff;
     --info-border: #a9cdf5;
     --stat-warning: #b45309;
+    --shadow: rgba(0, 0, 0, 0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a;
+    --bg-alt: #1d2026;
+    --text-primary: #eef0f2;
+    --text-secondary: #9ba1ab;
+    --border: #2e323b;
+    --accent: #5b9dff;
+    --accent-bg: #17233b;
+    --warning-bg: #382b0f;
+    --warning-border: #6b4f17;
+    --info-bg: #12283a;
+    --info-border: #234a68;
+    --stat-warning: #f2a340;
+    --shadow: rgba(0, 0, 0, 0.4);
   }
   * { box-sizing: border-box; }
   body {
@@ -25,14 +49,28 @@
     color: var(--text-primary);
     background: var(--bg);
     margin: 0;
-    padding: 32px 24px 80px;
+    padding: 32px 24px 96px;
     line-height: 1.5;
+    transition: background 0.15s ease, color 0.15s ease;
   }
   main { max-width: 980px; margin: 0 auto; }
+  .page-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
   h1 { font-size: 26px; font-weight: 650; margin: 0 0 4px; }
   h2 { font-size: 19px; font-weight: 650; margin: 28px 0 10px; }
   h3 { font-size: 16px; font-weight: 650; margin: 20px 0 8px; }
   p.subtitle { color: var(--text-secondary); font-size: 13px; margin: 0 0 20px; }
+  #themeToggle {
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-alt);
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-primary);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
   .callout {
     border-radius: 8px;
     padding: 14px 16px;
@@ -94,6 +132,7 @@
     background: var(--bg);
   }
   input[type="number"]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent); }
   button {
     height: 26px;
     padding: 0 12px;
@@ -119,22 +158,71 @@
   th { background: var(--bg-alt); font-size: 12px; color: var(--text-secondary); font-weight: 600; }
   tr:last-child td { border-bottom: none; }
   td.num, th.num { text-align: right; }
+  td.checkbox-cell { width: 30px; text-align: center; }
+  tr.is-selected td { background: var(--accent-bg); }
   .helper-row { display: flex; align-items: center; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
   .note { color: var(--text-secondary); font-size: 12px; }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
   .sources li { font-size: 13px; margin: 4px 0; }
   code { background: var(--bg-alt); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  .quote-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 16px var(--shadow);
+    z-index: 100;
+    display: none;
+  }
+  .quote-bar-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 24px;
+    cursor: pointer;
+  }
+  #quoteBarText { font-size: 14px; font-weight: 650; }
+  #quoteBarText .sub { font-weight: 400; color: var(--text-secondary); margin-left: 6px; font-size: 12px; }
+  .quote-bar-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .quote-panel {
+    max-width: 980px;
+    margin: 0 auto;
+    max-height: 260px;
+    overflow-y: auto;
+    border-bottom: 1px solid var(--border);
+    padding: 4px 24px;
+  }
+  .quote-panel-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    gap: 10px;
+  }
+  .quote-panel-row:last-child { border-bottom: none; }
+  .quote-panel-row button { height: 22px; padding: 0 8px; font-size: 11px; }
   @media (max-width: 700px) {
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
     .input-grid, .input-grid.cols-4 { grid-template-columns: 1fr 1fr; }
+    .quote-bar-inner, .quote-panel { padding-left: 14px; padding-right: 14px; }
   }
 </style>
 </head>
 <body>
 <main>
-  <h1>Junk Removal Fee Schedule — Las Vegas, NV</h1>
-  <p class="subtitle">Interactive cost model for a 2020 Ram 1500 V6 4x4 (19 city / 24 hwy mpg) towing a 4,000 lb dump trailer · edit any input below to match your real numbers · your edits are saved in this browser automatically</p>
+  <div class="page-header">
+    <div>
+      <h1>Junk Removal Fee Schedule — Las Vegas, NV</h1>
+      <p class="subtitle">Interactive cost model for a 2020 Ram 1500 V6 4x4 (19 city / 24 hwy mpg) towing a 4,000 lb dump trailer · edit any input below to match your real numbers · your edits are saved in this browser automatically</p>
+    </div>
+    <button id="themeToggle" onclick="toggleTheme()">☀️ Light mode</button>
+  </div>
 
   <div class="callout warning">
     <div class="callout-title">The two attached rate sheets aren't landfill tipping fees</div>
@@ -201,16 +289,16 @@
   <hr />
 
   <h2>Quick reference: price by item</h2>
-  <p class="note">For jobs with just one or two items, skip the load-fraction math and quote straight from these tables. All prices already include the minimum job price floor.</p>
+  <p class="note">For jobs with just one or two items, skip the load-fraction math and quote straight from these tables. All prices already include the minimum job price floor. <strong>Check the boxes</strong> next to items a customer wants removed to build a quote — the running total appears at the bottom of the page.</p>
 
   <h3>Furniture &amp; household items</h3>
-  <table id="furnitureTable"><thead><tr><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
+  <table id="furnitureTable"><thead><tr><th></th><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
 
   <h3>Appliances &amp; electronics (no refrigerant)</h3>
-  <table id="appliancesTable"><thead><tr><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
+  <table id="appliancesTable"><thead><tr><th></th><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
 
   <h3>Hazardous / special-handling items</h3>
-  <table id="hazmatTable"><thead><tr><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
+  <table id="hazmatTable"><thead><tr><th></th><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
 
   <div class="callout info">
     <div class="callout-title">Freon and oil rules that affect pricing</div>
@@ -218,7 +306,7 @@
   </div>
 
   <h3>Specialty items — start here, then confirm in person</h3>
-  <table id="specialtyTable"><thead><tr><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Starting price</th><th>Notes</th></tr></thead><tbody></tbody></table>
+  <table id="specialtyTable"><thead><tr><th></th><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Starting price</th><th>Notes</th></tr></thead><tbody></tbody></table>
 
   <hr />
 
@@ -247,6 +335,17 @@
   </ul>
   <p class="note">Vehicle specs: 2020 Ram 1500 3.6L Pentastar V6 4x4 towing (6,390–7,730 lbs) and payload (up to 2,300 lbs) ratings per Stellantis/Mopar published specifications — actual figures vary by your specific cab, bed, and axle ratio.</p>
 </main>
+
+<div class="quote-bar" id="quoteBar">
+  <div class="quote-panel" id="quotePanel" style="display:none"></div>
+  <div class="quote-bar-inner" onclick="toggleQuotePanel()">
+    <span id="quoteBarText">0 items selected</span>
+    <div class="quote-bar-actions">
+      <button class="primary" onclick="event.stopPropagation(); copyQuote()">Copy quote for customer</button>
+      <button onclick="event.stopPropagation(); clearQuote()">Clear</button>
+    </div>
+  </div>
+</div>
 
 <script>
   const DEFAULTS = {
@@ -313,15 +412,19 @@
     ["1/8 load", 0.125], ["1/4 load", 0.25], ["3/8 load", 0.375], ["1/2 load", 0.5],
     ["5/8 load", 0.625], ["3/4 load", 0.75], ["7/8 load", 0.875], ["Full load", 1.0],
   ];
+  const ITEM_GROUPS = [
+    ["furn", FURNITURE], ["appl", APPLIANCES], ["hazm", HAZMAT], ["spec", SPECIALTY],
+  ];
 
   const STORAGE_KEY = "junkRemovalFeeSchedule.v1";
+  const THEME_KEY = "junkRemovalTheme.v1";
 
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? { ...DEFAULTS, ...JSON.parse(raw) } : { ...DEFAULTS };
+      return raw ? { ...DEFAULTS, selectedItems: {}, ...JSON.parse(raw) } : { ...DEFAULTS, selectedItems: {} };
     } catch (e) {
-      return { ...DEFAULTS };
+      return { ...DEFAULTS, selectedItems: {} };
     }
   }
   function saveState(state) {
@@ -329,6 +432,19 @@
   }
 
   let state = loadState();
+  if (!state.selectedItems) state.selectedItems = {};
+
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute("data-theme") || "dark";
+    const next = current === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+    updateThemeButton();
+  }
+  function updateThemeButton() {
+    const current = document.documentElement.getAttribute("data-theme") || "dark";
+    document.getElementById("themeToggle").textContent = current === "dark" ? "☀️ Light mode" : "🌙 Dark mode";
+  }
 
   function num(v, fallback) {
     const n = parseFloat(v);
@@ -430,7 +546,8 @@
       renderAll();
     });
     document.getElementById("resetBtn").addEventListener("click", () => {
-      state = { ...DEFAULTS };
+      const keepSelection = state.selectedItems;
+      state = { ...DEFAULTS, selectedItems: keepSelection };
       saveState(state);
       renderAssumptionsGrid();
       bindHelperInputs();
@@ -438,8 +555,73 @@
     });
   }
 
-  function rowsForItems(items, calc) {
-    return items.map(([name, cuYdItem, lbs, extraFeeKey, extraNote]) => {
+  function toggleItem(key, checked) {
+    if (checked) state.selectedItems[key] = true;
+    else delete state.selectedItems[key];
+    saveState(state);
+    renderAll();
+  }
+  function clearQuote() {
+    state.selectedItems = {};
+    saveState(state);
+    renderAll();
+  }
+  function toggleQuotePanel() {
+    const panel = document.getElementById("quotePanel");
+    panel.style.display = panel.style.display === "none" ? "block" : "none";
+  }
+  function getSelectedItems(calc) {
+    const out = [];
+    ITEM_GROUPS.forEach(([prefix, list]) => {
+      list.forEach(([name, cuYdItem, lbs, extraFeeKey], i) => {
+        const key = prefix + "_" + i;
+        if (state.selectedItems[key]) {
+          out.push({ key, name, price: calc.itemPrice(cuYdItem, extraFeeKey) });
+        }
+      });
+    });
+    return out;
+  }
+  function buildQuoteText(items, total) {
+    const lines = ["Junk Removal Quote", ""];
+    items.forEach((it) => lines.push(`- ${it.name}: ${fmt0(it.price)}`));
+    lines.push("", `Total: ${fmt0(total)}`);
+    return lines.join("\n");
+  }
+  function copyQuote() {
+    const calc = computeAll();
+    const items = getSelectedItems(calc);
+    if (items.length === 0) return;
+    const total = items.reduce((s, it) => s + it.price, 0);
+    const text = buildQuoteText(items, total);
+    const done = () => {
+      const btn = document.querySelector(".quote-bar-actions .primary");
+      if (btn) {
+        const original = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(() => { btn.textContent = original; }, 1500);
+      }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+  function fallbackCopy(text, done) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  function rowsForItems(items, calc, prefix) {
+    return items.map(([name, cuYdItem, lbs, extraFeeKey, extraNote], i) => {
+      const key = prefix + "_" + i;
       const price = calc.itemPrice(cuYdItem, extraFeeKey);
       const notes = [];
       if (extraFeeKey === "freon") notes.push(`Includes ${fmt0(calc.freon)} Freon handling fee`);
@@ -447,8 +629,39 @@
       if (lbs >= 150) notes.push("Plan for 2 people");
       if (cuYdItem > calc.cuYd) notes.push("Exceeds trailer capacity alone — may need a second trip");
       if (extraNote) notes.push(extraNote);
-      return `<tr><td>${name}</td><td class="num">${cuYdItem.toFixed(2)} cu yd</td><td class="num">~${lbs} lbs</td><td class="num">${fmt0(price)}</td><td>${notes.join(" · ") || "—"}</td></tr>`;
+      const checked = !!state.selectedItems[key];
+      return `<tr class="${checked ? "is-selected" : ""}">
+        <td class="checkbox-cell"><input type="checkbox" ${checked ? "checked" : ""} onchange="toggleItem('${key}', this.checked)" /></td>
+        <td>${name}</td>
+        <td class="num">${cuYdItem.toFixed(2)} cu yd</td>
+        <td class="num">~${lbs} lbs</td>
+        <td class="num">${fmt0(price)}</td>
+        <td>${notes.join(" · ") || "—"}</td>
+      </tr>`;
     }).join("");
+  }
+
+  function renderQuote(calc) {
+    const items = getSelectedItems(calc);
+    const bar = document.getElementById("quoteBar");
+    const panel = document.getElementById("quotePanel");
+    const text = document.getElementById("quoteBarText");
+    if (items.length === 0) {
+      bar.style.display = "none";
+      return;
+    }
+    const total = items.reduce((s, it) => s + it.price, 0);
+    bar.style.display = "block";
+    text.innerHTML = `${items.length} item${items.length > 1 ? "s" : ""} selected — Total ${fmt0(total)} <span class="sub">tap to view / edit list</span>`;
+    panel.innerHTML = items.map((it) => `
+      <div class="quote-panel-row">
+        <span>${it.name}</span>
+        <span style="display:flex; align-items:center; gap:10px;">
+          <strong>${fmt0(it.price)}</strong>
+          <button onclick="event.stopPropagation(); toggleItem('${it.key}', false)">Remove</button>
+        </span>
+      </div>
+    `).join("");
   }
 
   function renderAll() {
@@ -473,14 +686,17 @@
       </tr>
     `).join("");
 
-    document.querySelector("#furnitureTable tbody").innerHTML = rowsForItems(FURNITURE, calc);
-    document.querySelector("#appliancesTable tbody").innerHTML = rowsForItems(APPLIANCES, calc);
-    document.querySelector("#hazmatTable tbody").innerHTML = rowsForItems(HAZMAT, calc);
-    document.querySelector("#specialtyTable tbody").innerHTML = rowsForItems(SPECIALTY, calc);
+    document.querySelector("#furnitureTable tbody").innerHTML = rowsForItems(FURNITURE, calc, "furn");
+    document.querySelector("#appliancesTable tbody").innerHTML = rowsForItems(APPLIANCES, calc, "appl");
+    document.querySelector("#hazmatTable tbody").innerHTML = rowsForItems(HAZMAT, calc, "hazm");
+    document.querySelector("#specialtyTable tbody").innerHTML = rowsForItems(SPECIALTY, calc, "spec");
 
     document.getElementById("minPriceCell").textContent = fmt0(calc.minPrice);
+
+    renderQuote(calc);
   }
 
+  updateThemeButton();
   renderAssumptionsGrid();
   bindHelperInputs();
   renderAll();

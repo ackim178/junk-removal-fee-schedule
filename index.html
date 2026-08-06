@@ -6,7 +6,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="theme-color" content="#ffffff" />
+<meta name="theme-color" content="#14161a" />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("junkRemovalThemeMobile.v1") || "dark";
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+  })();
+</script>
 <title>Junk Removal Fee Schedule — Las Vegas, NV</title>
 <style>
   :root {
@@ -16,11 +24,28 @@
     --text-secondary: #5f5f5f;
     --border: #e0e0e0;
     --accent: #2563eb;
+    --accent-bg: #eef2ff;
     --warning-bg: #fff7e6;
     --warning-border: #f0c674;
     --info-bg: #eef6ff;
     --info-border: #a9cdf5;
     --stat-warning: #b45309;
+    --shadow: rgba(0, 0, 0, 0.08);
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161a;
+    --bg-alt: #1d2026;
+    --text-primary: #eef0f2;
+    --text-secondary: #9ba1ab;
+    --border: #2e323b;
+    --accent: #5b9dff;
+    --accent-bg: #17233b;
+    --warning-bg: #382b0f;
+    --warning-border: #6b4f17;
+    --info-bg: #12283a;
+    --info-border: #234a68;
+    --stat-warning: #f2a340;
+    --shadow: rgba(0, 0, 0, 0.5);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
@@ -29,15 +54,29 @@
     color: var(--text-primary);
     background: var(--bg);
     margin: 0;
-    padding: max(20px, env(safe-area-inset-top)) 16px calc(60px + env(safe-area-inset-bottom));
+    padding: max(20px, env(safe-area-inset-top)) 16px calc(90px + env(safe-area-inset-bottom));
     line-height: 1.5;
     font-size: 16px;
+    transition: background 0.15s ease, color 0.15s ease;
   }
   main { max-width: 640px; margin: 0 auto; }
+  .page-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
   h1 { font-size: 21px; font-weight: 700; margin: 0 0 6px; line-height: 1.3; }
   h2 { font-size: 17px; font-weight: 700; margin: 26px 0 8px; }
   h3 { font-size: 15px; font-weight: 700; margin: 0; }
   p.subtitle { color: var(--text-secondary); font-size: 13px; margin: 0 0 16px; }
+  #themeToggle {
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-alt);
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--text-primary);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
   .callout {
     border-radius: 10px;
     padding: 12px 14px;
@@ -56,6 +95,7 @@
     padding: 12px 14px;
     margin: 0 0 14px;
     font-size: 13.5px;
+    color: #1a1a1a;
   }
   .noscript-banner strong { display: block; margin-bottom: 4px; }
   hr { border: none; border-top: 1px solid var(--border); margin: 22px 0; }
@@ -116,6 +156,7 @@
     width: 100%;
   }
   input[type="number"]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  input[type="checkbox"] { width: 22px; height: 22px; cursor: pointer; accent-color: var(--accent); flex-shrink: 0; }
   button {
     min-height: 44px;
     padding: 0 16px;
@@ -143,12 +184,16 @@
     padding: 11px 13px;
     margin: 8px 0;
   }
+  .item-card { display: flex; gap: 10px; align-items: flex-start; }
+  .item-card.is-selected { background: var(--accent-bg); border-color: var(--accent); }
+  .item-card-main { flex: 1; min-width: 0; }
   .item-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
   .item-name { font-size: 14px; font-weight: 600; }
   .item-price { font-size: 16px; font-weight: 700; white-space: nowrap; }
   .item-meta { font-size: 12.5px; color: var(--text-secondary); margin-top: 3px; }
   .item-notes { font-size: 12px; color: var(--stat-warning); margin-top: 4px; }
   .item-notes:empty { display: none; }
+  .item-checkbox { padding-top: 2px; }
 
   details.group summary {
     list-style: none;
@@ -177,17 +222,58 @@
   .fee-name { font-size: 14px; font-weight: 600; }
   .fee-amount { font-size: 13.5px; color: var(--accent); font-weight: 600; margin-top: 2px; }
   .fee-when { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
+
+  .quote-bar {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 16px var(--shadow);
+    z-index: 100;
+    display: none;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .quote-bar-inner {
+    padding: 10px 16px;
+    cursor: pointer;
+  }
+  #quoteBarText { font-size: 13.5px; font-weight: 700; display: block; }
+  #quoteBarText .sub { font-weight: 400; color: var(--text-secondary); display: block; font-size: 11.5px; margin-top: 1px; }
+  .quote-bar-actions { display: flex; gap: 8px; margin-top: 8px; }
+  .quote-bar-actions button { min-height: 40px; }
+  .quote-panel {
+    max-height: 220px;
+    overflow-y: auto;
+    border-bottom: 1px solid var(--border);
+    padding: 2px 16px;
+  }
+  .quote-panel-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    gap: 10px;
+  }
+  .quote-panel-row:last-child { border-bottom: none; }
+  .quote-panel-row button { min-height: 30px; width: auto; padding: 0 10px; font-size: 11.5px; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Junk Removal Fee Schedule</h1>
-  <p class="subtitle">Las Vegas, NV · 2020 Ram 1500 V6 4x4 (19 city / 24 hwy mpg) towing a 4,000 lb dump trailer · tap any number below to edit it</p>
+  <div class="page-header">
+    <div>
+      <h1>Junk Removal Fee Schedule</h1>
+      <p class="subtitle">Las Vegas, NV · 2020 Ram 1500 V6 4x4 (19 city / 24 hwy mpg) towing a 4,000 lb dump trailer · tap any number below to edit it</p>
+    </div>
+    <button id="themeToggle" onclick="toggleTheme()">☀️</button>
+  </div>
 
   <noscript>
     <div class="noscript-banner">
       <strong>You're viewing a static snapshot.</strong>
-      This preview doesn't run JavaScript, so the numbers below reflect the default assumptions only and can't be edited here. To get the live, editable calculator, open this file in Safari (from the Files app, tap Share → Open in Safari, or "Add to Home Screen") instead of using Quick Look.
+      This preview doesn't run JavaScript, so the numbers below reflect the default assumptions only and can't be edited or selected here. To get the live, editable calculator, open this file in Safari (from the Files app, tap Share → Open in Safari, or "Add to Home Screen") instead of using Quick Look.
     </div>
   </noscript>
 
@@ -287,112 +373,112 @@
   <hr />
 
   <h2>Quick reference: price by item</h2>
-  <p class="note">For one or two items, skip the load-fraction math and quote straight from here.</p>
+  <p class="note">Check items a customer wants removed — the running total appears at the bottom of the screen.</p>
 
   <details class="group" open>
     <summary>Furniture &amp; household items</summary>
     <div id="furnitureContainer">
-<div class="item-card">
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_0" onchange="toggleItem('furn_0', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">A few boxes/bags of misc. items</span><span class="item-price" id="furn-price-0">$89</span></div>
   <div class="item-meta">0.15 cu yd · ~40 lbs</div>
   <div class="item-notes" id="furn-notes-0"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_1" onchange="toggleItem('furn_1', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Single chair / small side table</span><span class="item-price" id="furn-price-1">$90</span></div>
   <div class="item-meta">0.30 cu yd · ~25 lbs</div>
   <div class="item-notes" id="furn-notes-1"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_2" onchange="toggleItem('furn_2', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Recliner / armchair</span><span class="item-price" id="furn-price-2">$100</span></div>
   <div class="item-meta">0.50 cu yd · ~90 lbs</div>
   <div class="item-notes" id="furn-notes-2"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_3" onchange="toggleItem('furn_3', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Loveseat</span><span class="item-price" id="furn-price-3">$125</span></div>
   <div class="item-meta">1.00 cu yd · ~100 lbs</div>
   <div class="item-notes" id="furn-notes-3"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_4" onchange="toggleItem('furn_4', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Sofa / couch (3-seat)</span><span class="item-price" id="furn-price-4">$150</span></div>
   <div class="item-meta">1.50 cu yd · ~130 lbs</div>
   <div class="item-notes" id="furn-notes-4"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_5" onchange="toggleItem('furn_5', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Sectional sofa</span><span class="item-price" id="furn-price-5">$220</span></div>
   <div class="item-meta">3.00 cu yd · ~250 lbs</div>
   <div class="item-notes" id="furn-notes-5">Plan for 2 people</div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_6" onchange="toggleItem('furn_6', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Mattress or box spring (single piece)</span><span class="item-price" id="furn-price-6">$95</span></div>
   <div class="item-meta">0.40 cu yd · ~60 lbs</div>
   <div class="item-notes" id="furn-notes-6"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_7" onchange="toggleItem('furn_7', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Mattress + box spring set</span><span class="item-price" id="furn-price-7">$115</span></div>
   <div class="item-meta">0.80 cu yd · ~120 lbs</div>
   <div class="item-notes" id="furn-notes-7"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_8" onchange="toggleItem('furn_8', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Dresser / chest of drawers</span><span class="item-price" id="furn-price-8">$125</span></div>
   <div class="item-meta">1.00 cu yd · ~120 lbs</div>
   <div class="item-notes" id="furn-notes-8"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_9" onchange="toggleItem('furn_9', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Dining table + 4 chairs</span><span class="item-price" id="furn-price-9">$160</span></div>
   <div class="item-meta">1.75 cu yd · ~150 lbs</div>
   <div class="item-notes" id="furn-notes-9">Plan for 2 people</div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_10" onchange="toggleItem('furn_10', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Desk</span><span class="item-price" id="furn-price-10">$110</span></div>
   <div class="item-meta">0.75 cu yd · ~90 lbs</div>
   <div class="item-notes" id="furn-notes-10"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="furn_11" onchange="toggleItem('furn_11', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Bookshelf / cabinet</span><span class="item-price" id="furn-price-11">$110</span></div>
   <div class="item-meta">0.75 cu yd · ~100 lbs</div>
   <div class="item-notes" id="furn-notes-11"></div>
-</div>
+</div></div>
     </div>
   </details>
 
   <details class="group">
     <summary>Appliances &amp; electronics (no refrigerant)</summary>
     <div id="appliancesContainer">
-<div class="item-card">
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="appl_0" onchange="toggleItem('appl_0', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Washer</span><span class="item-price" id="appl-price-0">$100</span></div>
   <div class="item-meta">0.50 cu yd · ~180 lbs</div>
   <div class="item-notes" id="appl-notes-0">Plan for 2 people</div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="appl_1" onchange="toggleItem('appl_1', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Dryer</span><span class="item-price" id="appl-price-1">$100</span></div>
   <div class="item-meta">0.50 cu yd · ~100 lbs</div>
   <div class="item-notes" id="appl-notes-1"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="appl_2" onchange="toggleItem('appl_2', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Stove / range</span><span class="item-price" id="appl-price-2">$100</span></div>
   <div class="item-meta">0.50 cu yd · ~175 lbs</div>
   <div class="item-notes" id="appl-notes-2">Plan for 2 people</div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="appl_3" onchange="toggleItem('appl_3', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Dishwasher</span><span class="item-price" id="appl-price-3">$95</span></div>
   <div class="item-meta">0.40 cu yd · ~100 lbs</div>
   <div class="item-notes" id="appl-notes-3"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="appl_4" onchange="toggleItem('appl_4', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Microwave / small electronics</span><span class="item-price" id="appl-price-4">$89</span></div>
   <div class="item-meta">0.10 cu yd · ~30 lbs</div>
   <div class="item-notes" id="appl-notes-4"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="appl_5" onchange="toggleItem('appl_5', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Flat-screen TV</span><span class="item-price" id="appl-price-5">$89</span></div>
   <div class="item-meta">0.15 cu yd · ~25 lbs</div>
   <div class="item-notes" id="appl-notes-5"></div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="appl_6" onchange="toggleItem('appl_6', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Treadmill / large gym equipment</span><span class="item-price" id="appl-price-6">$150</span></div>
   <div class="item-meta">1.50 cu yd · ~250 lbs</div>
   <div class="item-notes" id="appl-notes-6">Plan for 2 people</div>
-</div>
+</div></div>
     </div>
   </details>
 
@@ -404,47 +490,47 @@
       </div>
     </div>
     <div id="hazmatContainer">
-<div class="item-card">
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="hazm_0" onchange="toggleItem('hazm_0', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Refrigerator or freezer (contains Freon)</span><span class="item-price" id="hazm-price-0">$170</span></div>
   <div class="item-meta">0.75 cu yd · ~250 lbs</div>
   <div class="item-notes" id="hazm-notes-0">Includes $40 Freon handling fee · Plan for 2 people</div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="hazm_1" onchange="toggleItem('hazm_1', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Window, wall, or portable AC unit (contains Freon)</span><span class="item-price" id="hazm-price-1">$145</span></div>
   <div class="item-meta">0.25 cu yd · ~60 lbs</div>
   <div class="item-notes" id="hazm-notes-1">Includes $40 Freon handling fee</div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="hazm_2" onchange="toggleItem('hazm_2', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Used motor oil — up to 5 gal, sealed &amp; upright</span><span class="item-price" id="hazm-price-2">$125</span></div>
   <div class="item-meta">0.05 cu yd · ~40 lbs</div>
   <div class="item-notes" id="hazm-notes-2">Includes $30 hazmat handling fee</div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="hazm_3" onchange="toggleItem('hazm_3', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Other HHW — paint, batteries, propane, pesticides</span><span class="item-price" id="hazm-price-3">$125</span></div>
   <div class="item-meta">0.10 cu yd · ~30 lbs</div>
   <div class="item-notes" id="hazm-notes-3">Includes $30 hazmat handling fee</div>
-</div>
+</div></div>
     </div>
   </details>
 
   <details class="group">
     <summary>Specialty items — confirm in person</summary>
     <div id="specialtyContainer">
-<div class="item-card">
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="spec_0" onchange="toggleItem('spec_0', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Upright piano</span><span class="item-price" id="spec-price-0">$220</span></div>
   <div class="item-meta">3.00 cu yd · ~450 lbs</div>
   <div class="item-notes" id="spec-notes-0">Plan for 2 people · Weight-dense &amp; fragile — plan for 3 people or a piano dolly.</div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="spec_1" onchange="toggleItem('spec_1', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Hot tub / spa shell</span><span class="item-price" id="spec-price-1">$320</span></div>
   <div class="item-meta">5.00 cu yd · ~600 lbs</div>
   <div class="item-notes" id="spec-notes-1">Plan for 2 people · Often needs draining/disassembly first — quote in person.</div>
-</div>
-<div class="item-card">
+</div></div>
+<div class="item-card"><span class="item-checkbox"><input type="checkbox" data-key="spec_2" onchange="toggleItem('spec_2', this.checked)" /></span><div class="item-card-main">
   <div class="item-row"><span class="item-name">Large/heavy safe</span><span class="item-price" id="spec-price-2">$100</span></div>
   <div class="item-meta">0.50 cu yd · ~400 lbs</div>
   <div class="item-notes" id="spec-notes-2">Plan for 2 people · Weight far exceeds typical density for its size — verify weight on-site.</div>
-</div>
+</div></div>
     </div>
   </details>
 
@@ -472,6 +558,17 @@
   </ul>
   <p class="note">Vehicle specs: 2020 Ram 1500 3.6L V6 4x4 towing (6,390–7,730 lbs) and payload (up to 2,300 lbs) per Stellantis/Mopar published specs — verify against your specific configuration.</p>
 </main>
+
+<div class="quote-bar" id="quoteBar">
+  <div class="quote-panel" id="quotePanel" style="display:none"></div>
+  <div class="quote-bar-inner" onclick="toggleQuotePanel()">
+    <span id="quoteBarText">0 items selected</span>
+    <div class="quote-bar-actions">
+      <button class="primary" onclick="event.stopPropagation(); copyQuote()">Copy quote for customer</button>
+      <button onclick="event.stopPropagation(); clearQuote()">Clear</button>
+    </div>
+  </div>
+</div>
 
 <script>
   var DEFAULTS = {
@@ -527,18 +624,38 @@
     ["1/8 load", 0.125], ["1/4 load", 0.25], ["3/8 load", 0.375], ["1/2 load", 0.5],
     ["5/8 load", 0.625], ["3/4 load", 0.75], ["7/8 load", 0.875], ["Full load", 1.0]
   ];
+  var ITEM_GROUPS = [
+    ["furn", FURNITURE], ["appl", APPLIANCES], ["hazm", HAZMAT], ["spec", SPECIALTY]
+  ];
 
   var STORAGE_KEY = "junkRemovalFeeScheduleMobile.v1";
+  var THEME_KEY = "junkRemovalThemeMobile.v1";
+
   function loadState() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? Object.assign({}, DEFAULTS, JSON.parse(raw)) : Object.assign({}, DEFAULTS);
-    } catch (e) { return Object.assign({}, DEFAULTS); }
+      var parsed = raw ? JSON.parse(raw) : {};
+      var merged = Object.assign({}, DEFAULTS, { selectedItems: {} }, parsed);
+      if (!merged.selectedItems) merged.selectedItems = {};
+      return merged;
+    } catch (e) { return Object.assign({}, DEFAULTS, { selectedItems: {} }); }
   }
   function saveState(state) {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
   }
   var state = loadState();
+
+  function toggleTheme() {
+    var current = document.documentElement.getAttribute("data-theme") || "dark";
+    var next = current === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+    updateThemeButton();
+  }
+  function updateThemeButton() {
+    var current = document.documentElement.getAttribute("data-theme") || "dark";
+    document.getElementById("themeToggle").textContent = current === "dark" ? "☀️" : "🌙";
+  }
 
   function num(v, fb) { var n = parseFloat(v); return isFinite(n) ? n : fb; }
   function roundNice(v) {
@@ -628,7 +745,8 @@
       renderAll();
     });
     document.getElementById("resetBtn").addEventListener("click", function () {
-      state = Object.assign({}, DEFAULTS);
+      var keepSelection = state.selectedItems;
+      state = Object.assign({}, DEFAULTS, { selectedItems: keepSelection });
       saveState(state);
       renderAssumptionsGrid();
       bindHelperInputs();
@@ -636,9 +754,75 @@
     });
   }
 
+  function toggleItem(key, checked) {
+    if (checked) state.selectedItems[key] = true;
+    else delete state.selectedItems[key];
+    saveState(state);
+    renderAll();
+  }
+  function clearQuote() {
+    state.selectedItems = {};
+    saveState(state);
+    renderAll();
+  }
+  function toggleQuotePanel() {
+    var panel = document.getElementById("quotePanel");
+    panel.style.display = panel.style.display === "none" ? "block" : "none";
+  }
+  function getSelectedItems(calc) {
+    var out = [];
+    ITEM_GROUPS.forEach(function (group) {
+      var prefix = group[0], list = group[1];
+      list.forEach(function (item, i) {
+        var key = prefix + "_" + i;
+        if (state.selectedItems[key]) {
+          out.push({ key: key, name: item[0], price: calc.itemPrice(item[1], item[3]) });
+        }
+      });
+    });
+    return out;
+  }
+  function buildQuoteText(items, total) {
+    var lines = ["Junk Removal Quote", ""];
+    items.forEach(function (it) { lines.push("- " + it.name + ": " + fmt0(it.price)); });
+    lines.push("", "Total: " + fmt0(total));
+    return lines.join("\n");
+  }
+  function copyQuote() {
+    var calc = computeAll();
+    var items = getSelectedItems(calc);
+    if (items.length === 0) return;
+    var total = items.reduce(function (s, it) { return s + it.price; }, 0);
+    var text = buildQuoteText(items, total);
+    var done = function () {
+      var btn = document.querySelector(".quote-bar-actions .primary");
+      if (btn) {
+        var original = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(function () { btn.textContent = original; }, 1500);
+      }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text, done); });
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+  function fallbackCopy(text, done) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
   function updateItemGroup(items, prefix, calc) {
     items.forEach(function (item, i) {
       var name = item[0], cuYdItem = item[1], lbs = item[2], extraFeeKey = item[3], extraNote = item[4];
+      var key = prefix + "_" + i;
       var price = calc.itemPrice(cuYdItem, extraFeeKey);
       var notes = [];
       if (extraFeeKey === "freon") notes.push("Includes " + fmt0(calc.freon) + " Freon handling fee");
@@ -650,7 +834,34 @@
       var notesEl = document.getElementById(prefix + "-notes-" + i);
       if (priceEl) priceEl.textContent = fmt0(price);
       if (notesEl) notesEl.textContent = notes.join(" · ");
+      var checkboxEl = document.querySelector('input[data-key="' + key + '"]');
+      var cardEl = checkboxEl ? checkboxEl.closest(".item-card") : null;
+      if (checkboxEl) checkboxEl.checked = !!state.selectedItems[key];
+      if (cardEl) cardEl.classList.toggle("is-selected", !!state.selectedItems[key]);
     });
+  }
+
+  function renderQuote(calc) {
+    var items = getSelectedItems(calc);
+    var bar = document.getElementById("quoteBar");
+    var panel = document.getElementById("quotePanel");
+    var text = document.getElementById("quoteBarText");
+    if (items.length === 0) {
+      bar.style.display = "none";
+      return;
+    }
+    var total = items.reduce(function (s, it) { return s + it.price; }, 0);
+    bar.style.display = "block";
+    text.innerHTML = items.length + " item" + (items.length > 1 ? "s" : "") + " selected — Total " + fmt0(total) +
+      '<span class="sub">tap to view / edit list</span>';
+    panel.innerHTML = items.map(function (it) {
+      return '<div class="quote-panel-row">' +
+        "<span>" + it.name + "</span>" +
+        '<span style="display:flex; align-items:center; gap:8px;">' +
+        "<strong>" + fmt0(it.price) + "</strong>" +
+        '<button onclick="event.stopPropagation(); toggleItem(\'' + it.key + "', false)\">Remove</button>" +
+        "</span></div>";
+    }).join("");
   }
 
   function renderAll() {
@@ -678,8 +889,11 @@
     updateItemGroup(APPLIANCES, "appl", calc);
     updateItemGroup(HAZMAT, "hazm", calc);
     updateItemGroup(SPECIALTY, "spec", calc);
+
+    renderQuote(calc);
   }
 
+  updateThemeButton();
   renderAssumptionsGrid();
   bindHelperInputs();
   renderAll();
