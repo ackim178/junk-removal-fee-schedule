@@ -343,6 +343,7 @@
   <div class="callout warning">
     <div class="callout-title">Towing capacity — verify before you load up</div>
     <p>A 2020 Ram 1500 3.6L V6 4x4's max tow rating runs roughly <strong>6,390–7,730 lbs</strong> depending on cab/bed/axle-ratio, and max payload (which must include trailer tongue weight) tops out around <strong>2,300 lbs</strong>. With a 4,000 lb empty trailer, that leaves roughly 2,400–3,700 lbs of cargo at the truck's absolute limit — the default above (2,800 lbs) already builds in a safety margin for Las Vegas heat, grades, and tongue weight. Check your exact door-jamb Tire &amp; Loading placard and the trailer's own VIN data plate, and don't run at the raw maximum on every job.</p>
+    <p>Your trailer's <strong>18 ft × 6.5 ft platform, stacked 4 ft high, holds ~17.3 cubic yards</strong> — well beyond what 2,800 lbs of typical household junk will physically fill. In practice that means <strong>weight (lbs), not platform space, is almost always what fills up first</strong> for dense loads (dirt, tile, appliances). The per-item and load-fraction prices below already account for this since the dump fee is calculated from actual weight, not volume — but for a job that's unusually bulky <em>and</em> light (lots of empty boxes, foam, patio furniture) you may fill the platform well before hitting 2,800 lbs, so use your judgment and bump the price up if a job clearly needs the whole trailer despite pricing light by weight.</p>
   </div>
 
   <hr />
@@ -453,7 +454,8 @@
 
   const DEFAULTS = {
     gasPrice: 5.00, towMpg: 12, localMpg: 16, dumpRoundTripMiles: 20, localDriveMiles: 10,
-    avgSpeedMph: 25, trailerCuYd: 7, trailerPayloadLbs: 2800, dumpFeePerTon: 37.54,
+    avgSpeedMph: 25, trailerLengthFt: 18, trailerWidthFt: 6.5, trailerStackHeightFt: 4,
+    trailerPayloadLbs: 2800, dumpFeePerTon: 37.54,
     laborRate: 88, vehicleCostPerMile: 0.30, markup: 1.5, freonFee: 40, oilFee: 30,
     minimumPrice: 89, targetTakeHome: 47.50, effectiveTaxRatePct: 28, overheadPerHour: 6,
     billableUtilizationPct: 80,
@@ -466,7 +468,9 @@
     ["dumpRoundTripMiles", "Miles: job site ↔ dump (round trip)"],
     ["localDriveMiles", "Miles: base ↔ job site (round trip)"],
     ["avgSpeedMph", "Avg. driving speed towing (mph)"],
-    ["trailerCuYd", "Trailer capacity (cubic yards)"],
+    ["trailerLengthFt", "Trailer platform length (ft)"],
+    ["trailerWidthFt", "Trailer platform width (ft)"],
+    ["trailerStackHeightFt", "Max stack height (ft)"],
     ["trailerPayloadLbs", "Safe trailer payload (lbs)"],
     ["dumpFeePerTon", "Landfill dump fee ($/ton)"],
     ["laborRate", "Labor rate — solo operator ($/hr)"],
@@ -568,7 +572,10 @@
     const dumpMiles = num(state.dumpRoundTripMiles, 20);
     const localMiles = num(state.localDriveMiles, 10);
     const speed = num(state.avgSpeedMph, 25);
-    const cuYd = Math.max(num(state.trailerCuYd, 7), 0.01);
+    const lengthFt = num(state.trailerLengthFt, 18);
+    const widthFt = num(state.trailerWidthFt, 6.5);
+    const stackHeightFt = num(state.trailerStackHeightFt, 4);
+    const cuYd = Math.max((lengthFt * widthFt * stackHeightFt) / 27, 0.01);
     const payload = num(state.trailerPayloadLbs, 2800);
     const dumpRate = num(state.dumpFeePerTon, 37.54);
     const labor = num(state.laborRate, 88);
@@ -1007,6 +1014,7 @@
       <div class="stat"><div class="value">${fmt0(calc.priceForFraction(0.5))}</div><div class="label">Half trailer load</div></div>
       <div class="stat"><div class="value">${fmt0(calc.priceForFraction(1))}</div><div class="label">Full trailer load</div></div>
       <div class="stat"><div class="value warning">${fmt0(calc.costForFraction(1))}</div><div class="label">Your cost to fill &amp; dump a full load</div></div>
+      <div class="stat"><div class="value">${calc.cuYd.toFixed(1)} cu yd</div><div class="label">Trailer platform capacity</div></div>
     `;
 
     document.querySelector("#loadTable tbody").innerHTML = LOAD_TIERS.map(([label, f]) => `

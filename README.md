@@ -81,6 +81,8 @@ The truck/trailer assumptions are based on published manufacturer specifications
 
 With a 4,000 lb empty trailer, that leaves roughly 2,400–3,700 lbs of usable cargo capacity at the absolute maximum. The calculator defaults `trailerPayloadLbs` to **2,800 lbs** — a conservative middle-of-the-range number that builds in a safety margin for Las Vegas heat, grades, and tongue weight. **Always verify your own truck's exact tow rating (door-jamb Tire & Loading placard) and your trailer's VIN data plate** rather than relying on this default, since it varies by exact configuration.
 
+Trailer platform capacity (`trailerLengthFt` × `trailerWidthFt` × `trailerStackHeightFt` ÷ 27) is based on **measured trailer dimensions — an 18 ft × 6.5 ft platform, stacked up to 4 ft high** — which works out to **~17.3 cubic yards**. This is a hard physical ceiling on volume, but for most real loads the **2,800 lb payload limit is reached well before the platform is physically full**, since typical household junk is far less dense than that. Treat the payload number as the everyday constraint and the platform volume as the "how much can I physically fit" ceiling for unusually bulky-but-light loads (empty boxes, foam furniture, patio sets).
+
 Real-world towing MPG (`towMpg`, default 12) is an estimate — towing typically cuts a V6 Ram 1500's unloaded EPA rating (19 city / 24 hwy) by roughly 40–50%. Track your own fuel-ups while towing loaded and adjust this input to match reality.
 
 ## Where the per-item volume & weight estimates came from
