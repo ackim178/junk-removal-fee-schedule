@@ -110,10 +110,25 @@ Additional fees & surcharges (long carry, rush/same-day service, after-hours, di
 ```
 index.html      Mobile-optimized layout (card-based, touch-friendly, iOS-tuned meta tags)
 desktop.html    Desktop/laptop layout (dense tables, multi-column input grids)
+manifest.json   Web app manifest (name, icons, theme color) for "Add to Home Screen"
+favicon.ico     Browser tab icon
+icons/          Favicon and home-screen icon PNGs generated from the business logo
 README.md       This file
 ```
 
-Both files are fully self-contained (inline CSS/JS, no build step) except for the PDF invoice feature, which lazy-loads jsPDF from a CDN only when you click "Download PDF."
+Both files are fully self-contained (inline CSS/JS, no build step) except for the PDF invoice feature, which lazy-loads jsPDF from a CDN (pinned to an exact version with a Subresource Integrity hash) only when you click "Download PDF."
+
+**Why `index.html` and `desktop.html` duplicate all the logic instead of sharing a common file:** this is deliberate, not an oversight. Keeping each layout fully self-contained means either file can be opened directly, AirDropped, or emailed on its own and still work with zero dependencies beyond the CDN-loaded PDF library — there's no build step, bundler, or shared file that has to ship alongside it. The trade-off is that any change to pricing logic, item tables, or the invoice builder has to be made in both files by hand — see "Customizing this for your own operation" below.
+
+## Running this locally
+
+No build step or server required — since everything is plain HTML/CSS/JS, you can just open `index.html` or `desktop.html` directly in a browser. If you want it to behave exactly like the hosted version (e.g. to test the PDF invoice feature, which needs a real origin to fetch jsPDF from its CDN), serve the folder instead of opening the file directly:
+
+```bash
+cd junk-removal-fee-schedule-site
+python3 -m http.server 8000
+# then open http://localhost:8000/ (mobile) or http://localhost:8000/desktop.html (desktop)
+```
 
 ## Customizing this for your own operation
 

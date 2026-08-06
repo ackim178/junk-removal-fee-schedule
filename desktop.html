@@ -24,6 +24,19 @@
   })();
 </script>
 <title>Junk Removal Fee Schedule — Las Vegas, NV</title>
+<meta name="description" content="Interactive pricing calculator, customer quote builder, and PDF invoice generator for Daddy's Junk Removal — junk removal and hauling service in Las Vegas, NV." />
+<meta property="og:title" content="Junk Removal Fee Schedule — Daddy's Junk Removal" />
+<meta property="og:description" content="Interactive pricing calculator, customer quote builder, and PDF invoice generator for junk removal in Las Vegas, NV." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://ackim178.github.io/junk-removal-fee-schedule/icons/icon-512.png" />
+<meta property="og:url" content="https://ackim178.github.io/junk-removal-fee-schedule/desktop.html" />
+<meta name="twitter:card" content="summary" />
+<meta name="theme-color" content="#14161a" />
+<link rel="icon" href="favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+<link rel="manifest" href="manifest.json" />
 <style>
   :root {
     --bg: #ffffff;
@@ -171,6 +184,7 @@
   tr:last-child td { border-bottom: none; }
   td.num, th.num { text-align: right; }
   td.checkbox-cell { width: 30px; text-align: center; }
+  tr.item-row { cursor: pointer; }
   tr.is-selected td { background: var(--accent-bg); }
   .helper-row { display: flex; align-items: center; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
   .note { color: var(--text-secondary); font-size: 12px; }
@@ -651,7 +665,14 @@
     renderAll();
     maybeRefreshInvoicePreview();
   }
+  function handleItemRowClick(e, key) {
+    if (e.target && (e.target.tagName === "INPUT" || e.target.closest("input"))) return;
+    const checkbox = document.getElementById("chk_" + key);
+    if (checkbox) checkbox.click();
+  }
   function clearQuote() {
+    const hasItems = Object.keys(state.selectedItems).some((k) => state.selectedItems[k]);
+    if (hasItems && !confirm("Clear all selected items from this quote?")) return;
     state.selectedItems = {};
     saveState(state);
     renderAll();
@@ -783,6 +804,8 @@
     script = document.createElement("script");
     script.id = "jspdf-script";
     script.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.2.1/jspdf.umd.min.js";
+    script.integrity = "sha512-plOdviVmws4Y3JAvbnpfKb2hVxKM1lCwsi3vmElYRj+tiDLffZ4FVUj5a8vyKJ9pIgl8JCAHEJ4D1iUKBecswg==";
+    script.crossOrigin = "anonymous";
     script.onload = callback;
     script.onerror = function () {
       alert("Couldn't load the PDF library — check your internet connection and try again.");
@@ -940,8 +963,8 @@
       if (cuYdItem > calc.cuYd) notes.push("Exceeds trailer capacity alone — may need a second trip");
       if (extraNote) notes.push(extraNote);
       const checked = !!state.selectedItems[key];
-      return `<tr class="${checked ? "is-selected" : ""}">
-        <td class="checkbox-cell"><input type="checkbox" ${checked ? "checked" : ""} onchange="toggleItem('${key}', this.checked)" /></td>
+      return `<tr class="item-row ${checked ? "is-selected" : ""}" onclick="handleItemRowClick(event, '${key}')">
+        <td class="checkbox-cell"><input type="checkbox" id="chk_${key}" ${checked ? "checked" : ""} onchange="toggleItem('${key}', this.checked)" /></td>
         <td>${name}</td>
         <td class="num">${cuYdItem.toFixed(2)} cu yd</td>
         <td class="num">~${lbs} lbs</td>
