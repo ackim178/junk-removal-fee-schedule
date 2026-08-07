@@ -365,25 +365,16 @@
   <p class="note">The industry-standard way to price mixed furniture/junk jobs: by how much of your trailer the job fills, not by counting individual items.</p>
 
   <div class="card">
-    <div class="card-header">Time assumptions — edit to match your actual job pace</div>
+    <div class="card-header">Time assumption — edit to match your actual job pace</div>
     <div class="card-body">
-      <div class="input-grid cols-4">
-        <label class="field">
-          <span>Arrival &amp; walkthrough time (per job)</span>
-          <div class="time-select-row">
-            <select id="stopTimeHours"></select><span class="time-unit">hr</span>
-            <select id="stopTimeMinutes"></select><span class="time-unit">min</span>
-          </div>
-        </label>
-        <label class="field">
-          <span>Loading time (full load)</span>
-          <div class="time-select-row">
-            <select id="loadingTimeHours"></select><span class="time-unit">hr</span>
-            <select id="loadingTimeMinutes"></select><span class="time-unit">min</span>
-          </div>
-        </label>
-      </div>
-      <p class="note" style="margin-bottom:0">These drive the "Your cost" column below. Loading time scales with load size — a 1/4 load bills 1/4 of the number you set here, a full load bills all of it.</p>
+      <label class="field" style="max-width:280px">
+        <span>Job time (full load) — walkthrough, loading, dump run &amp; unload</span>
+        <div class="time-select-row">
+          <select id="jobTimeHours"></select><span class="time-unit">hr</span>
+          <select id="jobTimeMinutes"></select><span class="time-unit">min</span>
+        </div>
+      </label>
+      <p class="note" style="margin-bottom:0">One number for the whole job, start to finish — arrival &amp; walkthrough, loading the trailer, the drive to the dump and back, and unloading there. This drives the "Your cost" column below and scales with load size — a 1/4 load bills 1/4 of the number you set here, a full load bills all of it.</p>
     </div>
   </div>
 
@@ -491,11 +482,11 @@
 
   const DEFAULTS = {
     gasPrice: 5.00, towMpg: 12, localMpg: 16, dumpRoundTripMiles: 20, localDriveMiles: 10,
-    avgSpeedMph: 25, trailerLengthFt: 18, trailerWidthFt: 6.5, trailerStackHeightFt: 4,
+    trailerLengthFt: 18, trailerWidthFt: 6.5, trailerStackHeightFt: 4,
     trailerPayloadLbs: 2800, dumpFeePerTon: 37.54,
     laborRate: 88, vehicleCostPerMile: 0.30, markup: 1.5, freonFee: 40, oilFee: 30,
     minimumPrice: 89, targetTakeHome: 47.50, effectiveTaxRatePct: 28, overheadPerHour: 6,
-    billableUtilizationPct: 80, stopTimeHr: 0.5, loadingTimeHr: 1.0,
+    billableUtilizationPct: 80, jobTimeHr: 2.0,
   };
 
   const FIELD_DEFS = [
@@ -504,7 +495,6 @@
     ["localMpg", "Local-drive MPG (no/light trailer)"],
     ["dumpRoundTripMiles", "Miles: job site ↔ dump (round trip)"],
     ["localDriveMiles", "Miles: base ↔ job site (round trip)"],
-    ["avgSpeedMph", "Avg. driving speed towing (mph)"],
     ["trailerLengthFt", "Trailer platform length (ft)"],
     ["trailerWidthFt", "Trailer platform width (ft)"],
     ["trailerStackHeightFt", "Max stack height (ft)"],
@@ -608,7 +598,6 @@
     const lMpg = num(state.localMpg, 16);
     const dumpMiles = num(state.dumpRoundTripMiles, 20);
     const localMiles = num(state.localDriveMiles, 10);
-    const speed = num(state.avgSpeedMph, 25);
     const lengthFt = num(state.trailerLengthFt, 18);
     const widthFt = num(state.trailerWidthFt, 6.5);
     const stackHeightFt = num(state.trailerStackHeightFt, 4);
@@ -625,21 +614,20 @@
     const taxPct = num(state.effectiveTaxRatePct, 28);
     const overheadHr = num(state.overheadPerHour, 6);
     const utilizationPct = Math.min(Math.max(num(state.billableUtilizationPct, 80), 1), 100);
-    const stopTimeHr = num(state.stopTimeHr, 0.5);
-    const loadingTimeHr = num(state.loadingTimeHr, 1.0);
+    const jobTimeHr = num(state.jobTimeHr, 2.0);
 
     const preTaxRate = takeHome / (1 - taxPct / 100);
     const suggestedLaborRate = (preTaxRate + overheadHr) / (utilizationPct / 100);
 
-    const fixedDumpTripCost = (dumpMiles / tMpg) * gas + dumpMiles * vpm + (dumpMiles / speed) * labor;
-    const baseStopCost = (localMiles / lMpg) * gas + localMiles * vpm + stopTimeHr * labor;
+    const fixedDumpTripCost = (dumpMiles / tMpg) * gas + dumpMiles * vpm;
+    const baseStopCost = (localMiles / lMpg) * gas + localMiles * vpm;
 
     function costForFraction(f) {
-      const loadingLaborCost = f * loadingTimeHr * labor;
+      const laborTimeCost = f * jobTimeHr * labor;
       const weightTons = (f * payload) / 2000;
       const dumpFeeCost = weightTons * dumpRate;
       const dumpShare = f * fixedDumpTripCost;
-      return baseStopCost + loadingLaborCost + dumpFeeCost + dumpShare;
+      return baseStopCost + laborTimeCost + dumpFeeCost + dumpShare;
     }
     function priceForFraction(f, extra) {
       extra = extra || 0;
@@ -713,8 +701,7 @@
   }
 
   function renderTimeSelects() {
-    populateHourMinuteSelect("stopTimeHours", "stopTimeMinutes", "stopTimeHr", 0.5);
-    populateHourMinuteSelect("loadingTimeHours", "loadingTimeMinutes", "loadingTimeHr", 1.0);
+    populateHourMinuteSelect("jobTimeHours", "jobTimeMinutes", "jobTimeHr", 2.0);
   }
 
   function bindHelperInputs() {
