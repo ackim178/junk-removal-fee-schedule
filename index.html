@@ -471,7 +471,7 @@
   <hr />
 
   <h2>Quick reference: price by item</h2>
-  <p class="note">Check items a customer wants removed — the running total appears at the bottom of the screen.</p>
+  <p class="note">Check items a customer wants removed — the running total appears at the bottom of the screen. Prices already include the minimum single-item price floor (lower than the full load-based trip minimum, since bundled items share one trip's fixed costs).</p>
 
   <details class="group" open>
     <summary>Furniture &amp; household items</summary>
@@ -636,7 +636,8 @@
 
   <h2>Additional fees &amp; surcharges</h2>
   <div>
-    <div class="fee-item"><div class="fee-name">Minimum job / trip charge</div><div class="fee-amount" id="minPriceOut">$89</div><div class="fee-when">Applied whenever the calculated price falls below this floor</div></div>
+    <div class="fee-item"><div class="fee-name">Minimum job / trip charge</div><div class="fee-amount" id="minPriceOut">$89</div><div class="fee-when">Load-based table floor — applied whenever a whole job's price falls below this</div></div>
+    <div class="fee-item"><div class="fee-name">Minimum single-item charge</div><div class="fee-amount" id="itemMinPriceOut">$89</div><div class="fee-when">Quick-reference table floor — lower than the trip charge since bundled items share one trip's fixed costs</div></div>
     <div class="fee-item"><div class="fee-name">Travel surcharge beyond 15 mi from base</div><div class="fee-amount">$1.50–$2.00/mi one-way</div><div class="fee-when">Far-out jobs (Laughlin, Boulder City, Mt. Charleston)</div></div>
     <div class="fee-item"><div class="fee-name">Stairs (no elevator)</div><div class="fee-amount">$15–$25 per flight</div><div class="fee-when">Extra labor carrying items up/down stairs</div></div>
     <div class="fee-item"><div class="fee-name">Long carry (&gt;75 ft door-to-truck)</div><div class="fee-amount">$25–$50 flat</div><div class="fee-when">Long walkways, alleys, gated communities</div></div>
@@ -709,7 +710,7 @@
     trailerLengthFt: 18, trailerWidthFt: 6.5, trailerStackHeightFt: 4,
     trailerPayloadLbs: 2800, dumpFeePerTon: 37.54,
     laborRate: 112, vehicleCostPerMile: 0.30, markup: 2.0, freonFee: 40, oilFee: 30,
-    minimumPrice: 89, targetTakeHome: 60.00, effectiveTaxRatePct: 28, overheadPerHour: 6,
+    minimumPrice: 240, itemMinimumPrice: 89, targetTakeHome: 60.00, effectiveTaxRatePct: 28, overheadPerHour: 6,
     billableUtilizationPct: 80, jobTimeHr: 2.5
   };
 
@@ -729,7 +730,8 @@
     ["markup", "Profit & overhead multiplier (×cost)"],
     ["freonFee", "Freon-appliance handling fee ($/unit)"],
     ["oilFee", "Motor oil / hazmat handling fee ($/trip)"],
-    ["minimumPrice", "Minimum job price ($)"]
+    ["minimumPrice", "Minimum job / trip price ($) — load-based table"],
+    ["itemMinimumPrice", "Minimum single-item price ($) — quick-reference table"]
   ];
 
   var FURNITURE = [
@@ -811,7 +813,8 @@
     var cuYd = Math.max((lengthFt * widthFt * stackHeightFt) / 27, 0.01);
     var payload = num(state.trailerPayloadLbs, 2800), dumpRate = num(state.dumpFeePerTon, 37.54);
     var labor = num(state.laborRate, 112), vpm = num(state.vehicleCostPerMile, 0.3), mk = num(state.markup, 2.0);
-    var freon = num(state.freonFee, 40), oil = num(state.oilFee, 30), minPrice = num(state.minimumPrice, 89);
+    var freon = num(state.freonFee, 40), oil = num(state.oilFee, 30), minPrice = num(state.minimumPrice, 240);
+    var itemMinPrice = num(state.itemMinimumPrice, 89);
     var takeHome = num(state.targetTakeHome, 60.0), taxPct = num(state.effectiveTaxRatePct, 28);
     var overheadHr = num(state.overheadPerHour, 6);
     var utilizationPct = Math.min(Math.max(num(state.billableUtilizationPct, 80), 1), 100);
@@ -837,9 +840,9 @@
     function itemPrice(cuYdItem, extraFeeKey) {
       var f = cuYdItem / cuYd;
       var extra = extraFeeKey === "freon" ? freon : extraFeeKey === "oil" ? oil : 0;
-      return priceForFraction(f, extra);
+      return Math.max(itemMinPrice, roundNice((costForFraction(f) + extra) * mk));
     }
-    return { cuYd: cuYd, payload: payload, freon: freon, oil: oil, minPrice: minPrice,
+    return { cuYd: cuYd, payload: payload, freon: freon, oil: oil, minPrice: minPrice, itemMinPrice: itemMinPrice,
       suggestedLaborRate: suggestedLaborRate, costForFraction: costForFraction,
       priceForFraction: priceForFraction, itemPrice: itemPrice };
   }
@@ -1289,6 +1292,7 @@
     document.getElementById("stat-cost-full").textContent = fmt0(calc.costForFraction(1));
     document.getElementById("stat-cap").textContent = calc.cuYd.toFixed(1) + " cu yd";
     document.getElementById("minPriceOut").textContent = fmt0(calc.minPrice);
+    document.getElementById("itemMinPriceOut").textContent = fmt0(calc.itemMinPrice);
 
     LOAD_TIERS.forEach(function (tier, i) {
       var f = tier[1];

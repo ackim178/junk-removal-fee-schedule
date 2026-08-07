@@ -386,7 +386,7 @@
   <hr />
 
   <h2>Quick reference: price by item</h2>
-  <p class="note">For jobs with just one or two items, skip the load-fraction math and quote straight from these tables. All prices already include the minimum job price floor. <strong>Check the boxes</strong> next to items a customer wants removed to build a quote — the running total appears at the bottom of the page.</p>
+  <p class="note">For jobs with just one or two items, skip the load-fraction math and quote straight from these tables. All prices already include the minimum single-item price floor (lower than the full load-based trip minimum, since bundled items share one trip's fixed costs). <strong>Check the boxes</strong> next to items a customer wants removed to build a quote — the running total appears at the bottom of the page.</p>
 
   <h3>Furniture &amp; household items</h3>
   <table id="furnitureTable"><thead><tr><th></th><th>Item</th><th class="num">Volume</th><th class="num">Typical weight</th><th class="num">Suggested price</th><th>Notes</th></tr></thead><tbody></tbody></table>
@@ -411,7 +411,8 @@
   <table>
     <thead><tr><th>Fee</th><th>Suggested amount</th><th>When it applies</th></tr></thead>
     <tbody>
-      <tr><td>Minimum job / trip charge</td><td id="minPriceCell"></td><td>Applied whenever the calculated price falls below this floor</td></tr>
+      <tr><td>Minimum job / trip charge</td><td id="minPriceCell"></td><td>Load-based table floor — applied whenever a whole job's calculated price falls below this</td></tr>
+      <tr><td>Minimum single-item charge</td><td id="itemMinPriceCell"></td><td>Quick-reference table floor — applied per item, lower than the trip charge since bundling items into one trip spreads your fixed costs</td></tr>
       <tr><td>Travel surcharge beyond 15 mi from base</td><td>$1.50–$2.00/mi one-way beyond 15 mi</td><td>Extra windshield time &amp; fuel to reach far-out jobs (Laughlin, Boulder City, Mt. Charleston)</td></tr>
       <tr><td>Stairs (no elevator)</td><td>$15–$25 per flight, per item group</td><td>Extra labor/time carrying items up/down stairs</td></tr>
       <tr><td>Long carry (&gt;75 ft door-to-truck)</td><td>$25–$50 flat</td><td>Long walkways, alleys, or gated communities with distant parking</td></tr>
@@ -485,7 +486,7 @@
     trailerLengthFt: 18, trailerWidthFt: 6.5, trailerStackHeightFt: 4,
     trailerPayloadLbs: 2800, dumpFeePerTon: 37.54,
     laborRate: 112, vehicleCostPerMile: 0.30, markup: 2.0, freonFee: 40, oilFee: 30,
-    minimumPrice: 89, targetTakeHome: 60.00, effectiveTaxRatePct: 28, overheadPerHour: 6,
+    minimumPrice: 240, itemMinimumPrice: 89, targetTakeHome: 60.00, effectiveTaxRatePct: 28, overheadPerHour: 6,
     billableUtilizationPct: 80, jobTimeHr: 2.5,
   };
 
@@ -505,7 +506,8 @@
     ["markup", "Profit & overhead multiplier (×cost)"],
     ["freonFee", "Freon-appliance handling fee ($/unit)"],
     ["oilFee", "Motor oil / hazmat handling fee ($/trip)"],
-    ["minimumPrice", "Minimum job price ($)"],
+    ["minimumPrice", "Minimum job / trip price ($) — load-based table"],
+    ["itemMinimumPrice", "Minimum single-item price ($) — quick-reference table"],
   ];
 
   const FURNITURE = [
@@ -609,7 +611,8 @@
     const mk = num(state.markup, 2.0);
     const freon = num(state.freonFee, 40);
     const oil = num(state.oilFee, 30);
-    const minPrice = num(state.minimumPrice, 89);
+    const minPrice = num(state.minimumPrice, 240);
+    const itemMinPrice = num(state.itemMinimumPrice, 89);
     const takeHome = num(state.targetTakeHome, 60.0);
     const taxPct = num(state.effectiveTaxRatePct, 28);
     const overheadHr = num(state.overheadPerHour, 6);
@@ -636,10 +639,10 @@
     function itemPrice(cuYdItem, extraFeeKey) {
       const f = cuYdItem / cuYd;
       const extra = extraFeeKey === "freon" ? freon : extraFeeKey === "oil" ? oil : 0;
-      return priceForFraction(f, extra);
+      return Math.max(itemMinPrice, roundNice((costForFraction(f) + extra) * mk));
     }
 
-    return { cuYd, payload, freon, oil, minPrice, suggestedLaborRate, costForFraction, priceForFraction, itemPrice };
+    return { cuYd, payload, freon, oil, minPrice, itemMinPrice, suggestedLaborRate, costForFraction, priceForFraction, itemPrice };
   }
 
   function renderAssumptionsGrid() {
@@ -1101,6 +1104,7 @@
     document.querySelector("#specialtyTable tbody").innerHTML = rowsForItems(SPECIALTY, calc, "spec");
 
     document.getElementById("minPriceCell").textContent = fmt0(calc.minPrice);
+    document.getElementById("itemMinPriceCell").textContent = fmt0(calc.itemMinPrice);
 
     renderQuote(calc);
   }

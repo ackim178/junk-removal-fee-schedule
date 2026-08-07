@@ -44,8 +44,16 @@ price = max( minimumJobPrice, roundToNiceNumber( (cost + extraFees) × markupMul
 
 - **`markupMultiplier`** (default `2.0×`) — covers profit margin plus overhead that isn't captured hour-by-hour (insurance, tools/trailer maintenance reserve, slow days, no-shows, marketing), *and* positions pricing to match what the Las Vegas market actually bears rather than just your bare cost-plus-labor number.
 - **`extraFees`** — a flat Freon-handling fee (`$40` default) for refrigerant-containing appliances, or a hazmat-handling fee (`$30` default) for motor oil/other household hazardous waste — these are added to the cost *before* markup, since they're pass-through compliance costs, not variable dump-weight costs.
-- **`minimumJobPrice`** (default `$89`) — a floor so a tiny one-item job never prices below what it costs you to show up.
 - **Rounding** — final prices round to the nearest $5 under $150, nearest $10 under $500, and nearest $25 above that, so quotes look like clean, professional numbers instead of "$127.43."
+
+### Two separate minimum-price floors — and why they're not the same number
+
+The tool applies **two different floors** rather than one shared `minimumPrice`, because a whole-job trip and a single small item have very different real minimum-time costs:
+
+- **`minimumPrice`** (default `$240`, applied to the **load-based table**) — the floor for a whole job/trip. It assumes at least ~1 hour of real hands-on-and-driving time (drive there, walk through, load, drive to the dump, unload) is unavoidable on *any* dispatch, priced at your labor rate: `baseStopCost + 1hr × laborRate + dump fee/share, then × markup`. This keeps the smallest whole-job quote from underpaying you relative to the labor rate you actually need to hit your take-home target.
+- **`itemMinimumPrice`** (default `$89`, applied to the **Quick reference: price by item** table) — a lower floor for a *single item within a job*. It's intentionally lower than `minimumPrice` because the per-item table is meant for building up a multi-item quote (or a walk-up single-item job) where several small items can share one trip's fixed driving/dump costs — if every item individually had to clear the full $240 trip minimum, a 3-item pickup would price absurdly high, and the smallest items (a chair, a lamp) would all be indistinguishable from a hot tub.
+
+Because most individual furniture/appliance items are such a small fraction of the trailer's total volume (a chair is ~1.7% of a full load), their raw cost-based price rarely exceeds a low floor — so most of them cluster at the `itemMinimumPrice` floor, while genuinely large single items (sectional sofa, piano, hot tub, Freon appliances) price above it based on actual volume/weight. **Only use the per-item prices for genuinely small, one-or-two-item jobs** — for anything filling a meaningful fraction of the trailer, quote from the load-based table instead, which reflects your real per-job time/labor floor.
 
 ### Step 3 — Reverse-engineer your labor rate from a take-home goal
 
@@ -64,7 +72,7 @@ Example with the defaults ($60/hr take-home, 28% tax, $6/hr overhead, 80% utiliz
 
 ### Putting it together: why a full load defaults to $700
 
-With the defaults above (`jobTimeHr` = 2.5 hr, `laborRate` = $112/hr, `markup` = 2.0×, plus the standard dump-fee/mileage assumptions), a **full load** (`f = 1`) costs about **$353** to actually run, and `$353 × 2.0 ≈ $700` after rounding — matching the $700+ full-load rate Las Vegas competitors charge, while the $60/hr take-home target and 2.5-hour job-time floor make sure that price still reflects a realistic full day-of-work cost, not just "whatever the market will bear." Smaller loads scale down proportionally (e.g. a 1/4 load ≈ $190, a 1/2 load ≈ $360), and the $89 minimum floor still protects tiny one-item jobs from pricing below what it costs you to show up. Since every one of these numbers (take-home, job time, labor rate, markup) is a live input, you can nudge any of them if your actual costs or market shift — the $700 figure isn't hard-coded, it falls out of the assumptions above.
+With the defaults above (`jobTimeHr` = 2.5 hr, `laborRate` = $112/hr, `markup` = 2.0×, plus the standard dump-fee/mileage assumptions), a **full load** (`f = 1`) costs about **$353** to actually run, and `$353 × 2.0 ≈ $700` after rounding — matching the $700+ full-load rate Las Vegas competitors charge, while the $60/hr take-home target and 2.5-hour job-time floor make sure that price still reflects a realistic full day-of-work cost, not just "whatever the market will bear." Smaller loads scale down proportionally down to the `minimumPrice` floor of **$240** (1/4 load and below all floor there, since even a small job still needs ~1 hour of real drive/load/dump/unload time at your labor rate); a 1/2 load runs ≈$360, a 3/4 load ≈$525. Since every one of these numbers (take-home, job time, labor rate, markup, both minimums) is a live input, you can nudge any of them if your actual costs or market shift — none of these figures are hard-coded, they all fall out of the assumptions above.
 
 ## Where the disposal cost numbers came from
 
@@ -104,7 +112,7 @@ Additional fees & surcharges (long carry, rush/same-day service, after-hours, di
 
 ## Feature summary
 
-- **Live cost model** — every assumption (fuel price, MPG, trailer size, dump fee, labor rate, markup, minimum price, full-load job time) is editable and recalculates all output instantly.
+- **Live cost model** — every assumption (fuel price, MPG, trailer size, dump fee, labor rate, markup, the two separate minimum-price floors, full-load job time) is editable and recalculates all output instantly.
 - **Solo take-home → labor rate helper** — reverse-calculates the labor rate you need to bill to hit a real take-home target after tax, overhead, and utilization.
 - **Load-based pricing table** — price by trailer-fraction (1/8 load through full load).
 - **Quick-reference item pricing** — pre-computed prices for common furniture, appliances, hazmat, and specialty items.
