@@ -157,6 +157,19 @@
     background: var(--bg);
   }
   input[type="number"]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  select {
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0 6px;
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg);
+  }
+  select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .time-select-row { display: flex; align-items: center; gap: 4px; }
+  .time-select-row select { flex: 1; min-width: 0; }
+  .time-unit { font-size: 11px; color: var(--text-secondary); margin-right: 6px; }
   input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent); }
   button {
     height: 26px;
@@ -350,6 +363,30 @@
 
   <h2>Load-based pricing (fraction of trailer filled)</h2>
   <p class="note">The industry-standard way to price mixed furniture/junk jobs: by how much of your trailer the job fills, not by counting individual items.</p>
+
+  <div class="card">
+    <div class="card-header">Time assumptions — edit to match your actual job pace</div>
+    <div class="card-body">
+      <div class="input-grid cols-4">
+        <label class="field">
+          <span>Arrival &amp; walkthrough time (per job)</span>
+          <div class="time-select-row">
+            <select id="stopTimeHours"></select><span class="time-unit">hr</span>
+            <select id="stopTimeMinutes"></select><span class="time-unit">min</span>
+          </div>
+        </label>
+        <label class="field">
+          <span>Loading time (full load)</span>
+          <div class="time-select-row">
+            <select id="loadingTimeHours"></select><span class="time-unit">hr</span>
+            <select id="loadingTimeMinutes"></select><span class="time-unit">min</span>
+          </div>
+        </label>
+      </div>
+      <p class="note" style="margin-bottom:0">These drive the "Your cost" column below. Loading time scales with load size — a 1/4 load bills 1/4 of the number you set here, a full load bills all of it.</p>
+    </div>
+  </div>
+
   <table id="loadTable">
     <thead><tr><th>Load size</th><th class="num">Volume</th><th class="num">Est. weight</th><th class="num">Your cost</th><th class="num">Suggested price</th></tr></thead>
     <tbody></tbody>
@@ -458,7 +495,7 @@
     trailerPayloadLbs: 2800, dumpFeePerTon: 37.54,
     laborRate: 88, vehicleCostPerMile: 0.30, markup: 1.5, freonFee: 40, oilFee: 30,
     minimumPrice: 89, targetTakeHome: 47.50, effectiveTaxRatePct: 28, overheadPerHour: 6,
-    billableUtilizationPct: 80,
+    billableUtilizationPct: 80, stopTimeHr: 0.5, loadingTimeHr: 1.0,
   };
 
   const FIELD_DEFS = [
@@ -588,15 +625,17 @@
     const taxPct = num(state.effectiveTaxRatePct, 28);
     const overheadHr = num(state.overheadPerHour, 6);
     const utilizationPct = Math.min(Math.max(num(state.billableUtilizationPct, 80), 1), 100);
+    const stopTimeHr = num(state.stopTimeHr, 0.5);
+    const loadingTimeHr = num(state.loadingTimeHr, 1.0);
 
     const preTaxRate = takeHome / (1 - taxPct / 100);
     const suggestedLaborRate = (preTaxRate + overheadHr) / (utilizationPct / 100);
 
     const fixedDumpTripCost = (dumpMiles / tMpg) * gas + dumpMiles * vpm + (dumpMiles / speed) * labor;
-    const baseStopCost = (localMiles / lMpg) * gas + localMiles * vpm + 0.5 * labor;
+    const baseStopCost = (localMiles / lMpg) * gas + localMiles * vpm + stopTimeHr * labor;
 
     function costForFraction(f) {
-      const loadingLaborCost = f * 1.0 * labor;
+      const loadingLaborCost = f * loadingTimeHr * labor;
       const weightTons = (f * payload) / 2000;
       const dumpFeeCost = weightTons * dumpRate;
       const dumpShare = f * fixedDumpTripCost;
@@ -637,6 +676,47 @@
     });
   }
 
+  function populateHourMinuteSelect(hourId, minuteId, stateKey, defaultVal) {
+    const hourSel = document.getElementById(hourId);
+    const minSel = document.getElementById(minuteId);
+    if (hourSel.options.length === 0) {
+      for (let h = 0; h <= 24; h++) {
+        const opt = document.createElement("option");
+        opt.value = String(h);
+        opt.textContent = String(h);
+        hourSel.appendChild(opt);
+      }
+      [0, 15, 30, 45].forEach((m) => {
+        const opt = document.createElement("option");
+        opt.value = String(m);
+        opt.textContent = m < 10 ? "0" + m : String(m);
+        minSel.appendChild(opt);
+      });
+    }
+    const totalHr = num(state[stateKey], defaultVal);
+    let h = Math.min(24, Math.max(0, Math.floor(totalHr)));
+    let m = Math.round((totalHr - h) * 60 / 15) * 15;
+    if (m >= 60) { m = 0; h = Math.min(24, h + 1); }
+    if (h >= 24) { h = 24; m = 0; }
+    hourSel.value = String(h);
+    minSel.value = String(m);
+    function updateFromSelects() {
+      const hv = parseInt(hourSel.value, 10) || 0;
+      const mv = hv >= 24 ? 0 : (parseInt(minSel.value, 10) || 0);
+      if (hv >= 24) minSel.value = "0";
+      state[stateKey] = hv + mv / 60;
+      saveState(state);
+      renderAll();
+    }
+    hourSel.onchange = updateFromSelects;
+    minSel.onchange = updateFromSelects;
+  }
+
+  function renderTimeSelects() {
+    populateHourMinuteSelect("stopTimeHours", "stopTimeMinutes", "stopTimeHr", 0.5);
+    populateHourMinuteSelect("loadingTimeHours", "loadingTimeMinutes", "loadingTimeHr", 1.0);
+  }
+
   function bindHelperInputs() {
     ["targetTakeHome", "effectiveTaxRatePct", "overheadPerHour", "billableUtilizationPct"].forEach((key) => {
       const el = document.getElementById(key);
@@ -661,6 +741,7 @@
       saveState(state);
       renderAssumptionsGrid();
       bindHelperInputs();
+      renderTimeSelects();
       renderAll();
     });
   }
@@ -1040,6 +1121,7 @@
   updateThemeButton();
   renderAssumptionsGrid();
   bindHelperInputs();
+  renderTimeSelects();
   renderAll();
 </script>
 </body>

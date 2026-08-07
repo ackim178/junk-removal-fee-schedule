@@ -27,12 +27,14 @@ For any load fraction `f` (0 = nothing, 1 = a completely full trailer), the mode
 
 | Cost component | Formula | What it represents |
 |---|---|---|
-| **Base stop cost** | `(localMiles / localMpg) × gasPrice + localMiles × vehicleCostPerMile + 0.5 × laborRate` | Driving from your base to the job site and back, plus a flat 30 minutes of your time for the stop itself (arrival, walkthrough, paperwork) |
-| **Loading labor** | `f × 1.0 hr × laborRate` | Time to load the trailer, scaled by how much of it you're filling (a full load ≈ 1 hour of loading) |
+| **Base stop cost** | `(localMiles / localMpg) × gasPrice + localMiles × vehicleCostPerMile + stopTimeHr × laborRate` | Driving from your base to the job site and back, plus your own arrival/walkthrough time for the stop itself (paperwork, deciding what's being removed, moving the trailer into place) |
+| **Loading labor** | `f × loadingTimeHr × laborRate` | Time to physically load the trailer, scaled by how much of it you're filling (e.g. a 1/4 load bills 1/4 of your full-load loading time) |
 | **Dump fee** | `(f × trailerPayloadLbs / 2000) × dumpFeePerTon` | The actual landfill/transfer-station weight fee for your share of a full load |
 | **Dump trip share** | `f × [ (dumpMiles / towMpg) × gasPrice + dumpMiles × vehicleCostPerMile + (dumpMiles / avgSpeedMph) × laborRate ]` | Your share of the round-trip drive to the dump and back (gas, vehicle wear, and your time), prorated by how much of the trailer this job's items represent |
 
 Add all four together and you get the true, fully-loaded cost of doing that job — fuel, vehicle depreciation, dump tipping fees, *and* your own time, all in dollars.
+
+`stopTimeHr` and `loadingTimeHr` are editable right above the "Load-based pricing" table — each has an hour dropdown (0–24) and a minute dropdown (0/15/30/45 in quarter-hour steps) so you can dial them in to match how a job actually goes, rather than the built-in defaults of 30 minutes (stop) and 1 hour (loading a full trailer). Bump `loadingTimeHr` up if you're consistently taking longer than an hour to load a full trailer, and every price on the page — load table and per-item table alike — recalculates instantly.
 
 ### Step 2 — Turn cost into a price
 
@@ -98,7 +100,7 @@ Additional fees & surcharges (long carry, rush/same-day service, after-hours, di
 
 ## Feature summary
 
-- **Live cost model** — every assumption (fuel price, MPG, trailer size, dump fee, labor rate, markup, minimum price) is editable and recalculates all output instantly.
+- **Live cost model** — every assumption (fuel price, MPG, trailer size, dump fee, labor rate, markup, minimum price, arrival/loading time) is editable and recalculates all output instantly.
 - **Solo take-home → labor rate helper** — reverse-calculates the labor rate you need to bill to hit a real take-home target after tax, overhead, and utilization.
 - **Load-based pricing table** — price by trailer-fraction (1/8 load through full load).
 - **Quick-reference item pricing** — pre-computed prices for common furniture, appliances, hazmat, and specialty items.
