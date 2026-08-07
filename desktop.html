@@ -484,9 +484,9 @@
     gasPrice: 5.00, towMpg: 12, localMpg: 16, dumpRoundTripMiles: 20, localDriveMiles: 10,
     trailerLengthFt: 18, trailerWidthFt: 6.5, trailerStackHeightFt: 4,
     trailerPayloadLbs: 2800, dumpFeePerTon: 37.54,
-    laborRate: 88, vehicleCostPerMile: 0.30, markup: 1.5, freonFee: 40, oilFee: 30,
-    minimumPrice: 89, targetTakeHome: 47.50, effectiveTaxRatePct: 28, overheadPerHour: 6,
-    billableUtilizationPct: 80, jobTimeHr: 2.0,
+    laborRate: 112, vehicleCostPerMile: 0.30, markup: 2.0, freonFee: 40, oilFee: 30,
+    minimumPrice: 89, targetTakeHome: 60.00, effectiveTaxRatePct: 28, overheadPerHour: 6,
+    billableUtilizationPct: 80, jobTimeHr: 2.5,
   };
 
   const FIELD_DEFS = [
@@ -604,17 +604,17 @@
     const cuYd = Math.max((lengthFt * widthFt * stackHeightFt) / 27, 0.01);
     const payload = num(state.trailerPayloadLbs, 2800);
     const dumpRate = num(state.dumpFeePerTon, 37.54);
-    const labor = num(state.laborRate, 88);
+    const labor = num(state.laborRate, 112);
     const vpm = num(state.vehicleCostPerMile, 0.3);
-    const mk = num(state.markup, 1.5);
+    const mk = num(state.markup, 2.0);
     const freon = num(state.freonFee, 40);
     const oil = num(state.oilFee, 30);
     const minPrice = num(state.minimumPrice, 89);
-    const takeHome = num(state.targetTakeHome, 47.5);
+    const takeHome = num(state.targetTakeHome, 60.0);
     const taxPct = num(state.effectiveTaxRatePct, 28);
     const overheadHr = num(state.overheadPerHour, 6);
     const utilizationPct = Math.min(Math.max(num(state.billableUtilizationPct, 80), 1), 100);
-    const jobTimeHr = num(state.jobTimeHr, 2.0);
+    const jobTimeHr = num(state.jobTimeHr, 2.5);
 
     const preTaxRate = takeHome / (1 - taxPct / 100);
     const suggestedLaborRate = (preTaxRate + overheadHr) / (utilizationPct / 100);
@@ -701,7 +701,7 @@
   }
 
   function renderTimeSelects() {
-    populateHourMinuteSelect("jobTimeHours", "jobTimeMinutes", "jobTimeHr", 2.0);
+    populateHourMinuteSelect("jobTimeHours", "jobTimeMinutes", "jobTimeHr", 2.5);
   }
 
   function bindHelperInputs() {

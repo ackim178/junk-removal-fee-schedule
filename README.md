@@ -34,7 +34,7 @@ For any load fraction `f` (0 = nothing, 1 = a completely full trailer), the mode
 
 Add all four together and you get the true, fully-loaded cost of doing that job — fuel, vehicle depreciation, dump tipping fees, *and* your own time, all in dollars.
 
-`jobTimeHr` is one editable input right above the "Load-based pricing" table, with an hour dropdown (0–24) and a minute dropdown (0/15/30/45 in quarter-hour steps). It's intentionally a single number rather than separate walkthrough/loading/unloading fields — on a real job those all run together, so you just enter how long a **full load**, start to finish, actually takes you (default: 2 hours), and the calculator prorates it for smaller jobs automatically. Every price on the page — load table and per-item table alike — recalculates instantly when you change it.
+`jobTimeHr` is one editable input right above the "Load-based pricing" table, with an hour dropdown (0–24) and a minute dropdown (0/15/30/45 in quarter-hour steps). It's intentionally a single number rather than separate walkthrough/loading/unloading fields — on a real job those all run together, so you just enter how long a **full load**, start to finish, actually takes you (default: **2.5 hours**, matching a realistic full-load job in the Las Vegas market), and the calculator prorates it for smaller jobs automatically. Every price on the page — load table and per-item table alike — recalculates instantly when you change it.
 
 ### Step 2 — Turn cost into a price
 
@@ -42,7 +42,7 @@ Add all four together and you get the true, fully-loaded cost of doing that job 
 price = max( minimumJobPrice, roundToNiceNumber( (cost + extraFees) × markupMultiplier ) )
 ```
 
-- **`markupMultiplier`** (default `1.5×`) — covers profit margin plus overhead that isn't captured hour-by-hour (insurance, tools/trailer maintenance reserve, slow days, no-shows, marketing).
+- **`markupMultiplier`** (default `2.0×`) — covers profit margin plus overhead that isn't captured hour-by-hour (insurance, tools/trailer maintenance reserve, slow days, no-shows, marketing), *and* positions pricing to match what the Las Vegas market actually bears rather than just your bare cost-plus-labor number.
 - **`extraFees`** — a flat Freon-handling fee (`$40` default) for refrigerant-containing appliances, or a hazmat-handling fee (`$30` default) for motor oil/other household hazardous waste — these are added to the cost *before* markup, since they're pass-through compliance costs, not variable dump-weight costs.
 - **`minimumJobPrice`** (default `$89`) — a floor so a tiny one-item job never prices below what it costs you to show up.
 - **Rounding** — final prices round to the nearest $5 under $150, nearest $10 under $500, and nearest $25 above that, so quotes look like clean, professional numbers instead of "$127.43."
@@ -60,7 +60,11 @@ suggestedLaborRate = (pretaxRate + overheadPerHour) / (billableUtilizationPct / 
 - **Overhead per hour** adds a reserve for insurance, licensing, tools, and trailer upkeep.
 - **Billable utilization** accounts for the fact that not every working hour is billable — slow days, driving between jobs, scheduling, and invoicing all eat into the hours you can actually charge for, so the rate on your *billable* hours has to cover your *total* hours worked.
 
-Example with the defaults ($47.50/hr take-home, 28% tax, $6/hr overhead, 80% utilization): pretax rate = $65.97/hr → suggested labor rate ≈ **$89.97/hr** (the calculator's default `laborRate` of $88/hr is close to this suggestion, rounded down slightly).
+Example with the defaults ($60/hr take-home, 28% tax, $6/hr overhead, 80% utilization): pretax rate = $83.33/hr → suggested labor rate ≈ **$111.67/hr** (the calculator's default `laborRate` of $112/hr matches this suggestion, rounded to a clean number).
+
+### Putting it together: why a full load defaults to $700
+
+With the defaults above (`jobTimeHr` = 2.5 hr, `laborRate` = $112/hr, `markup` = 2.0×, plus the standard dump-fee/mileage assumptions), a **full load** (`f = 1`) costs about **$353** to actually run, and `$353 × 2.0 ≈ $700` after rounding — matching the $700+ full-load rate Las Vegas competitors charge, while the $60/hr take-home target and 2.5-hour job-time floor make sure that price still reflects a realistic full day-of-work cost, not just "whatever the market will bear." Smaller loads scale down proportionally (e.g. a 1/4 load ≈ $190, a 1/2 load ≈ $360), and the $89 minimum floor still protects tiny one-item jobs from pricing below what it costs you to show up. Since every one of these numbers (take-home, job time, labor rate, markup) is a live input, you can nudge any of them if your actual costs or market shift — the $700 figure isn't hard-coded, it falls out of the assumptions above.
 
 ## Where the disposal cost numbers came from
 

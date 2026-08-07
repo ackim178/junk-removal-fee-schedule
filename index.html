@@ -391,7 +391,7 @@
       <label class="field"><span>Overhead reserve ($/hr)</span><input type="number" id="overheadPerHour" step="0.5" /></label>
       <label class="field" style="margin-bottom:0"><span>Billable utilization (%)</span><input type="number" id="billableUtilizationPct" step="1" /></label>
       <div class="helper-row">
-        <div class="stat"><div class="value" id="suggestedLaborRateOut">$89.97</div><div class="label">Suggested labor rate to bill</div></div>
+        <div class="stat"><div class="value" id="suggestedLaborRateOut">$111.67</div><div class="label">Suggested labor rate to bill</div></div>
         <button class="primary" id="useRateBtn">Use this rate below</button>
       </div>
       <p class="note">Nevada has no state income tax, so 28% combined is a reasonable starting estimate — adjust with your accountant.</p>
@@ -708,9 +708,9 @@
     gasPrice: 5.00, towMpg: 12, localMpg: 16, dumpRoundTripMiles: 20, localDriveMiles: 10,
     trailerLengthFt: 18, trailerWidthFt: 6.5, trailerStackHeightFt: 4,
     trailerPayloadLbs: 2800, dumpFeePerTon: 37.54,
-    laborRate: 88, vehicleCostPerMile: 0.30, markup: 1.5, freonFee: 40, oilFee: 30,
-    minimumPrice: 89, targetTakeHome: 47.50, effectiveTaxRatePct: 28, overheadPerHour: 6,
-    billableUtilizationPct: 80, jobTimeHr: 2.0
+    laborRate: 112, vehicleCostPerMile: 0.30, markup: 2.0, freonFee: 40, oilFee: 30,
+    minimumPrice: 89, targetTakeHome: 60.00, effectiveTaxRatePct: 28, overheadPerHour: 6,
+    billableUtilizationPct: 80, jobTimeHr: 2.5
   };
 
   var FIELD_DEFS = [
@@ -810,12 +810,12 @@
     var stackHeightFt = num(state.trailerStackHeightFt, 4);
     var cuYd = Math.max((lengthFt * widthFt * stackHeightFt) / 27, 0.01);
     var payload = num(state.trailerPayloadLbs, 2800), dumpRate = num(state.dumpFeePerTon, 37.54);
-    var labor = num(state.laborRate, 88), vpm = num(state.vehicleCostPerMile, 0.3), mk = num(state.markup, 1.5);
+    var labor = num(state.laborRate, 112), vpm = num(state.vehicleCostPerMile, 0.3), mk = num(state.markup, 2.0);
     var freon = num(state.freonFee, 40), oil = num(state.oilFee, 30), minPrice = num(state.minimumPrice, 89);
-    var takeHome = num(state.targetTakeHome, 47.5), taxPct = num(state.effectiveTaxRatePct, 28);
+    var takeHome = num(state.targetTakeHome, 60.0), taxPct = num(state.effectiveTaxRatePct, 28);
     var overheadHr = num(state.overheadPerHour, 6);
     var utilizationPct = Math.min(Math.max(num(state.billableUtilizationPct, 80), 1), 100);
-    var jobTimeHr = num(state.jobTimeHr, 2.0);
+    var jobTimeHr = num(state.jobTimeHr, 2.5);
 
     var preTaxRate = takeHome / (1 - taxPct / 100);
     var suggestedLaborRate = (preTaxRate + overheadHr) / (utilizationPct / 100);
@@ -903,7 +903,7 @@
   }
 
   function renderTimeSelects() {
-    populateHourMinuteSelect("jobTimeHours", "jobTimeMinutes", "jobTimeHr", 2.0);
+    populateHourMinuteSelect("jobTimeHours", "jobTimeMinutes", "jobTimeHr", 2.5);
   }
 
   function bindHelperInputs() {
